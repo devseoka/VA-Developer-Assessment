@@ -19,16 +19,7 @@ export class PersonsComponent implements OnInit {
         this.personService.get(1, 10).subscribe({
             next: (response) => {
                 this.users = response.data
-            }<mat-accordion displayMode="default" [multi]="true"
-                           [hideToggle]="false">
-                <mat-expansion-panel [hideToggle]="false">
-                    <mat-expansion-panel-header>Panel header</mat-expansion-panel-header>
-                     Panel body
-                    <mat-action-row>
-                        <button mat-button (click)="onAction(event)">Action1</button>
-                    </mat-action-row>
-                </mat-expansion-panel>
-            </mat-accordion>
+            }
         })
     }
 
