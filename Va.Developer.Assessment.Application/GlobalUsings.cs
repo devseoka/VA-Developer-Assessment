@@ -1,0 +1,9 @@
+global using AutoMapper;
+global using AutoMapper.QueryableExtensions;
+global using Microsoft.EntityFrameworkCore;
+global using FluentValidation;
+global using Va.Developer.Assessment.Application.Contracts.Services;
+global using Va.Developer.Assessment.Domain.Contracts.Repository;
+global using Va.Developer.Assessment.Application.Contracts.Response;
+global using Va.Developer.Assessment.Application.Dto;
+global using Va.Developer.Assessment.Application.Response;

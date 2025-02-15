@@ -1,0 +1,22 @@
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Va.Developer.Assessment.Application.Services;
+
+namespace Va.Developer.Assessment.Application.Extensions
+{
+    public static class ServiceCollections
+    {
+        public static IServiceCollection ConfigureAutoMapperAndValidators(this IServiceCollection services){
+            return services
+                        .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
+                        .AddAutoMapper(Assembly.GetExecutingAssembly());
+        }
+        public static IServiceCollection ConfigureServices(this IServiceCollection services){
+            
+            services.TryAddScoped<IPersonService, PersonService>();
+            services.TryAddScoped<IAccountService, AccountService>();
+            return services;
+        }
+    }
+}
