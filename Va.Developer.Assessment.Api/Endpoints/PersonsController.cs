@@ -25,7 +25,7 @@ namespace Va.Developer.Assessment.Api.Endpoints
         public async Task<IActionResult> Get([FromQuery] int pageNumber, [FromQuery] int pageSize = 10)
         {
             var people = await _personService.Get(pageNumber,pageSize);
-            Log.Information("{@rows} users with {@account} were successfully retrieved", people.Count(), people.Select(p => p.Accounts).Count());
+            Log.Information("{@rows} users with {@account} accounts were successfully retrieved", people.Count(), people.Select(p => p.Accounts).Count());
             return Ok(new Response<IEnumerable<PersonDto>>() { Data = people, Succeeded = people.Any() });
         }
         [HttpGet("{id}")]

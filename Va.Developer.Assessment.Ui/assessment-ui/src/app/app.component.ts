@@ -2,17 +2,15 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { RouterModule } from '@angular/router';
-import { HomeComponent } from './static/home/home.component';
-import { AboutComponent } from './static/about/about.component';
-import { ContactComponent } from './static/contact/contact.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [CommonModule, DashboardModule, RouterModule, HomeComponent, AboutComponent, ContactComponent]
+  imports: [CommonModule, DashboardModule, RouterModule, HttpClientModule]
 })
 export class AppComponent {
-  title = 'assessment-ui';
+  title = 'Seoka Moshele | Virtual Agent | Developer Assessment';
 }
