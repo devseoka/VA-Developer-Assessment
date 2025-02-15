@@ -1,0 +1,16 @@
+global using System;
+global using System.Data;
+global using Va.Developer.Assessment.Application.Extensions;
+global using Va.Developer.Assessment.Infrastructure.Extensions;
+global using Va.Developer.Assessment.Api.Helpers.Middleware;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.AspNetCore.Mvc;
+global using Serilog;
+global using Serilog.Events;
+global using Serilog.Sinks.MSSqlServer;
+global using Va.Developer.Assessment.Api.Helpers.Extensions;
+global using Va.Developer.Assessment.Application.Contracts.Services;
+global using Va.Developer.Assessment.Application.Dto;
+global using Va.Developer.Assessment.Application.Response;

@@ -1,0 +1,6 @@
+@Va.Developer.Assessment.Api_HostAddress = http://localhost:5209
+
+GET {{Va.Developer.Assessment.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
