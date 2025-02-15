@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { DashboardRoutingModule } from "./dashboard-routing.module";
+import { DashboardRoutingModule } from "./dashboard-routing.routes";
 import { AccountsComponent } from "./accounts/accounts.component";
 import { PersonsComponent } from "./persons/persons.component";
 import { TransactionsComponent } from "./transactions/transactions.component";
