@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Va.Developer.Assessment.Infrastructure.Persistence.Context;
 
 namespace Va.Developer.Assessment.Infrastructure.Extensions;
 
