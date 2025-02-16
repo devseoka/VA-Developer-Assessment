@@ -24,4 +24,15 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+    <Folder Include="Endpoints\" />
+    <Folder Include="Repositories\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Va.Developer.Assessment.Api\Va.Developer.Assessment.Api.csproj" />
+  </ItemGroup>
+
 </Project>
