@@ -1,8 +1,3 @@
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Va.Developer.Assessment.Application.Services;
-
 namespace Va.Developer.Assessment.Application.Extensions
 {
     public static class ServiceCollections
