@@ -16,7 +16,9 @@ export const routes: Routes = [
     path: 'contact',
     loadComponent: () => import('./static/contact/contact.component').then(c => c.ContactComponent),
     title: 'Va Developer Assessment | Seoka Moshele | Contact'
-  }
+  },
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
+  {path: '**', redirectTo: 'home', pathMatch: 'prefix'}
 ];
 
 @NgModule({
