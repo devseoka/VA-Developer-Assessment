@@ -5,7 +5,7 @@ namespace Va.Developer.Assessment.Infrastructure.Persistence.Conversion
     using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
     using Va.Developer.Assessment.Domain.ValueObject;
 
-    public class MoneyConverter(Expression<Func<Money, string>> convertToProviderExpression, Expression<Func<string, Money>> convertFromProviderExpression, ConverterMappingHints? mappingHints = null) : ValueConverter<Money, string>(convertToProviderExpression, convertFromProviderExpression, mappingHints)
+    public class MoneyConverter(Expression<Func<Money, string>> convertToProviderExpression, Expression<Func<string, Money>> convertFromProviderExpression, ConverterMappingHints mappingHints = null) : ValueConverter<Money, string>(convertToProviderExpression, convertFromProviderExpression, mappingHints)
     {
     }
 }
