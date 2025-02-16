@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClientModule, HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { User } from "src/app/models/person.model";
 import { PersonService } from "src/app/services/person.service";
@@ -19,6 +19,9 @@ export class PersonsComponent implements OnInit {
         this.personService.get(1, 10).subscribe({
             next: (response) => {
                 this.users = response.data
+            },
+            error: (e: HttpErrorResponse) => {
+                console.log('An unexpected error =>', e.error)
             }
         })
     }

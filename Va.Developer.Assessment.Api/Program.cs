@@ -4,8 +4,10 @@ try
 {
 
     var builder = WebApplication.CreateBuilder(args);
+    
     string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-
+    const string CORS_ORIGINGS = "Assessement_UI_CORS_Origins";
+    
     builder.ConfigureSerilog(connection);
     builder.Services.ConfigureDbContext(connection);
     builder.Services.ConfigureRepositories();
@@ -15,6 +17,8 @@ try
 
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
+
+    builder.Services.EnableCors(CORS_ORIGINGS);
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
@@ -28,6 +32,7 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
+    app.UseCors(CORS_ORIGINGS);
     app.Services.EnsurerDatabaseCreate().Wait();
     app.UseExceptionHandler();
     app.UseHttpsRedirection();
