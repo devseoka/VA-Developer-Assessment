@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { SharedModule } from './shared/shared.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app.routes';
 import { HttpClientModule } from '@angular/common/http'
+import { SharedModule } from '@shared/shared.module';
 
 @Component({
   selector: 'app-root',
