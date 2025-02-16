@@ -1,21 +1,23 @@
-<ng-container *ngIfElse="users.length > 0;else usersTemp">
+<ng-container *ngIf="users.length > 0; else usersTemp">
     <h1>There are no users</h1>
-</ng-container>
-<ng-template #usersTemp>
+  </ng-container>
+  
+  <ng-template #usersTemp>
     <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Id Number</th>
-                <th>Accounts</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users">
-                <td>{{user.firstName}} {{user.lastName}}</td>
-                <td>{{user.idNo}}</td>
-                <td>{{user.accounts.length}}</td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Id Number</th>
+          <th>Accounts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{user.firstName}} {{user.lastName}}</td>
+          <td>{{user.idNo}}</td>
+          <td>{{user.accounts.length}}</td>
+        </tr>
+      </tbody>
     </table>
-</ng-template>
+  </ng-template>
+  

@@ -17,6 +17,10 @@ export const routes: Routes = [
     loadComponent: () => import('./static/contact/contact.component').then(c => c.ContactComponent),
     title: 'Va Developer Assessment | Seoka Moshele | Contact'
   },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)
+  },
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: '**', redirectTo: 'home', pathMatch: 'prefix'}
 ];
