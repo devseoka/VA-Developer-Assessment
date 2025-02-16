@@ -4,10 +4,10 @@ try
 {
 
     var builder = WebApplication.CreateBuilder(args);
-    
+
     string connection = builder.Configuration.GetConnectionString("DefaultConnection");
     const string CORS_ORIGINGS = "Assessement_UI_CORS_Origins";
-    
+
     builder.ConfigureSerilog(connection);
     builder.Services.ConfigureDbContext(connection);
     builder.Services.ConfigureRepositories();
@@ -32,24 +32,28 @@ try
         app.UseSwagger();
         app.UseSwaggerUI();
     }
-    app.UseCors(CORS_ORIGINGS);
-    app.Services.EnsurerDatabaseCreate().Wait();
     app.UseExceptionHandler();
+    app.UseCors(CORS_ORIGINGS);
+    
+    app.Services.EnsurerDatabaseCreate().Wait();
+
     app.UseHttpsRedirection();
     app.MapControllers();
 
 
     app.Run();
 }
-catch (Exception ex) when( ex is not HostAbortedException)
+catch (Exception ex) when (ex is not HostAbortedException)
 {
     var sb = new StringBuilder();
     sb.Append($"Error: {ex.Message}");
-    if(ex.InnerException is not null){
+    if (ex.InnerException is not null)
+    {
         sb.AppendLine($"Detailed Error: {ex.InnerException.Message}");
     }
-    Log.Fatal(exception: ex,"An unexpected fatal error occured. {@Message}. ", sb.ToString());
+    Log.Fatal(exception: ex, "An unexpected fatal error occured. {@Message}. ", sb.ToString());
 }
-finally {
+finally
+{
     Log.CloseAndFlush();
 }
