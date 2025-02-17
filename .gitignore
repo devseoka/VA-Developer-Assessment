@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Ignore Zone.Identifier files, which are used by Windows to store security zone information for downloaded files.
+*Zone.Identifier
