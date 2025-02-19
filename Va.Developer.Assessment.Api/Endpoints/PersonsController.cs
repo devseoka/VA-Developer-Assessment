@@ -22,9 +22,9 @@ namespace Va.Developer.Assessment.Api.Endpoints
             return Ok(new Response<PersonDto> { Data = person, Message = "You have successfully added a person", Succeeded = person.Id > 0 });
         }
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] int pageNumber, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> Get()
         {
-            var people = await _personService.Get(pageNumber,pageSize);
+            var people = await _personService.Get();
             Log.Information("{@rows} users with {@account} accounts were successfully retrieved", people.Count(), people.Select(p => p.Accounts).Count());
             return Ok(new Response<IEnumerable<PersonDto>>() { Data = people, Succeeded = people.Any() });
         }

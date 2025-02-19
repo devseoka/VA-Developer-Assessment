@@ -1,12 +1,13 @@
 <template>
-  <h1 class="text-3xl font-bold">
-    {{ name }}
-  </h1>
-
+  <Navbar />
+  <main class="flex-grow p-6">
+    <People />
+  </main>
+  <Footer />
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
-
-const name = ref('Moshele Seoka | Virtual Developer Assessment')
+import  Navbar  from '@/components/Navbar.vue'
+import  Footer  from '@/components/Footer.vue'
+import  People from '@/components/People.vue';
 </script>
 
