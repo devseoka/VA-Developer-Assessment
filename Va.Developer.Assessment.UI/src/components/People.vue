@@ -1,18 +1,12 @@
 <template>
-  <section class="flex items-center">
-    <div class="w-full max-w-screen-xl px-4 mx-auto lg:px-12">
-      <div class="relative overflow-hidden bg-white shadow-md sm:rounded-lg">
-        <div class="flex-row items-center justify-between p-4 space-y-3 sm:flex sm:space-y-0 sm:space-x-4">
-          <div>
-            <h4 class="mr-3 font-semibold text-assessment-secondary-700">Assessment Users</h4>
-            <p class="text-assessment-secondary-500 text-xs">Manage all existing assessment users or add new user</p>
-          </div>
-
-        </div>
-        <div class="flex flex-col items-center justify-between p-4 space-y-3 md:flex-row md:space-y-0 md:space-x-4">
+  <section class="bg-gray-50 p-3 sm:p-5 shadow-md sm:rounded-lg">
+    <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
+      <!-- Start coding here -->
+      <div class="relative  overflow-hidden">
+        <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
           <div class="w-full md:w-1/2">
-            <form @submit.prevent="onSearch" class="flex items-center">
-              <label for="search" class="sr-only">Search</label>
+            <form class="flex items-center">
+              <label for="simple-search" class="sr-only">Search</label>
               <div class="relative w-full">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor" viewbox="0 0 20 20"
@@ -22,43 +16,115 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="search" id="search"
-                  class="block w-full p-2 pl-10 text-sm text-assessment-secondary-900 border rounded-lg border-assessment-secondary-300 bg-gray-50 focus:ring-assessment-accent-500 focus:border-assessment-accent-500"
+                <input type="text" id="simple-search"
+                  class="bg-gray-50 border border-gray-300 text-assessment-secondary-700 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full pl-10 p-2 "
                   placeholder="Search" required>
               </div>
             </form>
           </div>
-          <div class="flex flex-col items-stretch justify-end shrink-0 w-full">
-            <button
-              class="items-center justify-center bg-assessment-primary-500 text-assessment-primary-50 px-4 py-2 rounded-lg font-medium hover:bg-assessment-primary-700 flex capitalize cursor-pointer focus:ring-4 focus:ring-assessment-primary-300 focus:outline-none w-full">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 -ml-1" viewBox="0 0 20 20" fill="currentColor"
-                aria-hidden="true">
-                <path
-                  d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
-              </svg>add assessment user</button>
+          <div
+            class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
+            <button type="button"
+              class="flex items-center justify-center text-white bg-assessment-secondary-500 hover:bg-assessment-secondary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none">
+              Add new user
+            </button>
           </div>
         </div>
-        <nav>
-          <span>Showing <span>1 - {{ totalPages }}</span> of
-            <span>{{ total }}</span>
-            <ul>
-              <li>
-                <a @click.prevent="onPrevious" v-if="currentPage > 1">
-                  <span>Previous</span>
-                  <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clip-rule="evenodd"></path>
-                  </svg>
-              <li>
-                <a @click.prevent="onNext" v-if="currentPage === totalPages"
-                  class="flex items-center justify-center px-3 py-2 text-sm leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-              </li>
-              </a>
-              </li>
-            </ul>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-assessment-secondary-700 uppercase bg-gray-100">
+              <tr>
+                <th scope="col" class="px-4 py-3">Id Number</th>
+                <th scope="col" class="px-4 py-3">Name</th>
+                <th scope="col" class="px-4 py-3">Accounts</th>
+                <th scope="col" class="px-4 py-3">
+                  <span class="sr-only">Actions</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="cursor-pointer">
+              <tr class="border-b" v-for="user in filteredUsers" :key="user.id">
+                <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ user.idNo }}</th>
+                <td class="px-4 py-3 capitalize">{{ user.firstName }} {{ user.lastName }}</td>
+                <td class="px-4 py-3" v-for="account in user.accounts">
+                  <span class="flex flex-col">{{ account.accountNo }}</span>
+                </td>
+                <td class="px-4 py-3 flex items-center justify-end">
+                  <button id="apple-imac-27-dropdown-button" data-dropdown-toggle="apple-imac-27-dropdown"
+                    class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+                    type="button">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                    </svg>
+                  </button>
+                  <div id="apple-imac-27-dropdown"
+                    class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
+                    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200"
+                      aria-labelledby="apple-imac-27-dropdown-button">
+                      <li>
+                        <a href="#"
+                          class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
+                      </li>
+                      <li>
+                        <a href="#"
+                          class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                      </li>
+                    </ul>
+                    <div class="py-1">
+                      <a href="#"
+                        class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <nav class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-3 md:space-y-0 p-4"
+          aria-label="Table navigation">
+          <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
+            Showing
+            <span class="font-semibold text-assessment-secondary-900">{{ currentPage }} &dash; {{ totalPages }}</span>
+            of
+            <span class="font-semibold text-assessment-primary-500">{{ total }}</span>
           </span>
+          <ul class="inline-flex items-stretch -space-x-px cursor-pointer">
+            <li @click.prevent="onPrevious" :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
+              <a
+                class="flex items-center justify-center h-full py-1.5 px-3 ml-0 text-assessment-secondary-500 bg-white rounded-l-lg border border-gray-300 hover:bg-assessment-secondary-100 hover:text-assessment-secondary-700">
+                <span class="sr-only">Previous</span>
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </a>
+            </li>
+            <li v-for="page in totalPages" :key="page">
+              <a href="#" :class="{
+                'flex items-center justify-center text-sm py-2 px-3 leading-tight': true,
+                'text-gray-500 bg-white border border-assessment-secondary-300 hover:bg-assessment-secondary-100 hover:text-assessment-secondary-700': currentPage !== page,
+                'text-assessment-secondary-500 bg-assessment-accent-50 border border-assessment-accent-300 hover:bg-assessment-accent-500 hover:text-assessment-secondary-50': currentPage === page
+              }" @click.prevent="redirectPage(page)">
+                {{ page }}
+              </a>
+            </li>
+            <li @click.prevent="onNext" :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">
+              <a
+                class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <span class="sr-only">Next</span>
+                <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </a>
+            </li>
+          </ul>
         </nav>
       </div>
     </div>
@@ -112,5 +178,9 @@ const filteredUsers = computed(() => {
   const end = start + itemsPerPage.value;
   return users.value.slice(start, end);
 });
+const redirectPage = (page: number) => {
+  currentPage.value = page
+}
+
 
 </script>
