@@ -16,7 +16,7 @@
                       clip-rule="evenodd" />
                   </svg>
                 </div>
-                <input type="text" id="simple-search"
+                <input type="text" id="search" v-model="query" @input="onSearch(query)"
                   class="bg-gray-50 border border-gray-300 text-assessment-secondary-700 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full pl-10 p-2 "
                   placeholder="Search" required>
               </div>
@@ -112,7 +112,7 @@
                 {{ page }}
               </a>
             </li>
-            <li @click.prevent="onNext" :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">
+            <li @click.prevent="onNext" :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }">
               <a
                 class="flex items-center justify-center h-full py-1.5 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                 <span class="sr-only">Next</span>
@@ -133,12 +133,34 @@
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import Fuse from "fuse.js";
 
-const users = ref<User[]>([])
-const total = ref<number>(0)
+const query = ref<string>('');
+
 const itemsPerPage = ref<number>(10)
-const currentPage = ref(1)
+const currentPage = ref<number>(1)
+const total = ref<number>(0)
+
+const searchResults = ref<User[]>([])
+const users = ref<User[]>([])
+const fuse = ref<Fuse<User> | null>(null);
+
+const initFuse = () => {
+  if (users.value && users.value.length > 0) {
+    fuse.value = new Fuse(users.value, {
+      keys: [
+        'lastName',
+        'firstName',
+        'accounts.accountNo'
+      ],
+      includeScore: true,
+      threshold: 0.3
+    });
+  }
+};
+
+watch(users, initFuse, { immediate: true });
 
 const getUsers = async () => {
   try {
@@ -161,8 +183,12 @@ onMounted(() => {
   getUsers();
 });
 
-const onSearch = () => {
-
+const onSearch = (search: string) => {
+  if (search.trim() !== '' && users.value.length > 0 && fuse.value) {
+    const results = fuse.value.search(search);
+    searchResults.value = results.map((result) => result.item);
+    currentPage.value = 1;
+  }
 }
 const onPrevious = () => {
   if (currentPage.value > 1) currentPage.value--;
@@ -176,7 +202,8 @@ const totalPages = computed(() => {
 const filteredUsers = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
-  return users.value.slice(start, end);
+  const source = query.value.trim() !== '' ? searchResults.value : users.value;
+  return source.slice(start, end);
 });
 const redirectPage = (page: number) => {
   currentPage.value = page
