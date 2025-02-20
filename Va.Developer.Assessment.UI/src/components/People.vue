@@ -88,7 +88,7 @@ const getUsers = async () => {
     });
     total.value = users.value.length
   } catch (error) {
-    console.error('An unexpected error occurred while retrieving users:', error);
+    console.error('An unexpected error occurred while retrieving users:', JSON.stringify(error));
   }
 };
 onMounted(() => {

@@ -23,8 +23,8 @@ namespace Va.Developer.Assessment.Application.Extensions
                 {
                     opts
                         .AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyOrigin();
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
                 });
             });
         }
