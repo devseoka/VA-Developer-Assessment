@@ -1,6 +1,6 @@
 <template>
   <div :id="`${type}-toaster`" v-if="visible" :class="[
-    'flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm',
+    ' fixed top-5 left-5 divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white',
     toastTypeClass
   ]" role="alert">
     <div :class="iconContainerClass">
@@ -20,7 +20,7 @@
           d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
       </svg>
     </div>
-    <div class="ms-3 text-sm font-normal">{{ message }}</div>
+    <div class="ms-3 text-sm font-normal capitalize">{{ message }}</div>
     <button type="button"
       class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8"
       @click="closeToast" aria-label="Close">

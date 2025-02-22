@@ -132,7 +132,7 @@ import type { Response } from '@/models/response.model';
 import { computed, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
 import { Modal, type ModalInterface, type ModalOptions } from 'flowbite';
-import Add from './modals/Add.vue';
+import Add from './modals/User/Add.vue';
 import axios from 'axios';
 
 const query = ref<string>('');

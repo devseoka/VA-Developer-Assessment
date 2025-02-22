@@ -1,5 +1,6 @@
 <template>
   <div class=""></div>
+  <Add @user-added-event="add" :modal="modal" />
   <TableHeader :title="'Assessment Users'" :subtitle="'Manage or add new users to the assessement application'" />
   <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
     <div class="w-full md:w-1/2">
@@ -75,17 +76,17 @@
     </table>
   </div>
   <TableFooter :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
-  <Toast v-if="toastType" :type="toastType" :message="message" />
-  <Add @user-added-event="add" :modal="modal" />
+  <Toaster v-if="toastType" :type="toastType" :message="message" />
 </template>
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
 import { Dropdown, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
-import Add from '@/components/modals/Add.vue';
+import Add from '@/components/modals/User/Add.vue';
 import axios, { AxiosError } from 'axios';
 import TableFooter from '@/components/table/TableFooter.vue';
 import TableHeader from '@/components/table/TableHeader.vue';
+import Toaster from '@/components/shared/Toaster.vue';
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
 
@@ -137,9 +138,6 @@ const initFuse = () => {
     })
   })
 };
-
-watch(users, initFuse, { immediate: true });
-
 const getUsers = async () => {
   try {
     var response = (await axios.get<Response<User[]>>('http://localhost:5209/api/persons'))
@@ -204,4 +202,22 @@ const onDelete = async (user:  User) => {
   }
 
 }
+
+watch(users, initFuse, { immediate: true });
+
+watch(filteredUsers, () => {
+  nextTick(() => {
+    filteredUsers.value.forEach(user => {
+      const $targetEl = document.getElementById('dropdown-' + user.id);
+      const $triggerEl = document.getElementById('dropdown-button-' + user.id);
+
+      if ($targetEl && $triggerEl) {
+        new Dropdown($targetEl, $triggerEl, {
+          placement: 'bottom',
+          triggerType: 'click'
+        });
+      }
+    });
+  });
+});
 </script>
