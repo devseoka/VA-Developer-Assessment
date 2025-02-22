@@ -12,11 +12,21 @@ namespace Va.Developer.Assessment.Application.Services
                     .People.Include(p => p.Accounts)
                     .ProjectTo<PersonDto>(_mapper.ConfigurationProvider);
 
-        public async Task<PersonDto> Add(PersonDto person)
+        public async Task<IResponse> Add(PersonDto person)
         {
             var entity = _mapper.Map<Person>(person);
+            if(await People.AnyAsync(p => p.IdNo == person.IdNo))
+            {
+                return new Response<PersonDto> { Message = "Id number already exists", Succeeded = false };
+            }
             entity = await _personRepostiory.Add(entity);
-            return _mapper.Map<PersonDto>(entity);
+            person = _mapper.Map<PersonDto>(entity);
+            return new Response<PersonDto> 
+            { 
+                Data = person, 
+                Message = $"{person.FirstName} {person.LastName} was successfully added",
+                Succeeded = person.Id  > 0
+            };
         }
 
         public async Task Delete(PersonDto person)
@@ -30,11 +40,11 @@ namespace Va.Developer.Assessment.Application.Services
             return await People.ToListAsync();
         }
 
-        public async Task<IEnumerable<PersonDto>> Get(int page, int size)
+        public async Task<IEnumerable<PersonDto>> Get(int pageNumber, int pageSize)
         {
             return await People
-                        .Skip((page - 1) * size)
-                        .Take(size)
+                        .Skip((pageNumber - 1) * pageSize)
+                        .Take(pageSize)
                         .ToListAsync();
         }
 

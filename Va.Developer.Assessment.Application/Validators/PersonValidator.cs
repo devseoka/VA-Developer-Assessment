@@ -17,7 +17,8 @@ namespace Va.Developer.Assessment.Application.Validators
                 .NotEmpty()
                 .WithMessage("Id number number is required")
                 .Length(13)
-                .WithMessage("Id number should have 13 digits");
+                .WithMessage("Id number should have 13 digits")
+                .Matches(@"^\d+$").WithMessage("ID number must be numeric.");
         }
     }
 }

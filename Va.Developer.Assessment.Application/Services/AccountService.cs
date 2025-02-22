@@ -30,7 +30,7 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
             var message = "The person you are attempting to add an account for does not exists";
             return new ErrorResponse { Errors = [message], Message = message };
         }
-        if (Accounts.Any(a => a.AccountNo == account.AccountNo))
+        if (await Accounts.AnyAsync(a => a.AccountNo == account.AccountNo))
         {
             var message = "Account number already exists.";
             return new ErrorResponse { Errors = [message], Message = message };

@@ -14,3 +14,6 @@ global using Va.Developer.Assessment.Api.Helpers.Extensions;
 global using Va.Developer.Assessment.Application.Contracts.Services;
 global using Va.Developer.Assessment.Application.Dto;
 global using Va.Developer.Assessment.Application.Response;
+global using System.Text.RegularExpressions;
+global using FluentValidation;
+global using Microsoft.AspNetCore.JsonPatch;

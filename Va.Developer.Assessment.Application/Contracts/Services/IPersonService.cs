@@ -5,7 +5,7 @@ namespace Va.Developer.Assessment.Application.Contracts.Services
         IQueryable<PersonDto> People { get;  }
         Task<IEnumerable<PersonDto>> Get();
         Task<IEnumerable<PersonDto>> Get(int pageNumber, int pageSize);
-        Task<PersonDto> Add(PersonDto person);
+        Task<IResponse> Add(PersonDto person);
         Task Delete(PersonDto person);
         Task<PersonDto> Update(PersonDto person);
         Task<PersonDto> GetPersonById(int code);

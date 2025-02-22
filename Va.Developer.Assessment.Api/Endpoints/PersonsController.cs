@@ -1,5 +1,5 @@
-using FluentValidation;
-using Microsoft.AspNetCore.JsonPatch;
+
+
 
 namespace Va.Developer.Assessment.Api.Endpoints
 {
@@ -17,15 +17,21 @@ namespace Va.Developer.Assessment.Api.Endpoints
                 var errors = result.Errors.Select(e => e.ErrorMessage);
                 return Conflict(new ErrorResponse { Errors = errors, Succeeded = !result.IsValid });
             }
-            person = await _personService.Add(person);
-            Log.Information("You have successfully added {@name} {@surname} person", person.FirstName, person.LastName);
-            return Ok(new Response<PersonDto> { Data = person, Message = "You have successfully added a person", Succeeded = person.Id > 0 });
+            person.IdNo = Regex.Replace(person.IdNo, @"(?<=^\d{2})\d{2}(?=\d{6})", "XX").Insert(10, "XX");
+            var response = await _personService.Add(person);
+            if (!response.Succeeded)
+            {
+                Log.Error("An error occured while adding a user. Error: {Message}",response.Message);
+                return BadRequest(response.Message);
+            }
+            Log.Information(response.Message, person.FirstName, person.LastName);
+            return Ok(response);
         }
         [HttpGet]
         public async Task<IActionResult> Get()
         {
             var people = await _personService.Get();
-            Log.Information("{@rows} users with {@account} accounts were successfully retrieved", people.Count(), people.Select(p => p.Accounts).Count());
+            Log.Information("{Rows} users with {Account} accounts were successfully retrieved", people.Count(), people.Select(p => p.Accounts).Count());
             return Ok(new Response<IEnumerable<PersonDto>>() { Data = people, Succeeded = people.Any() });
         }
         [HttpGet("{id}")]
@@ -70,7 +76,7 @@ namespace Va.Developer.Assessment.Api.Endpoints
                 return Conflict(new ErrorResponse { Errors = errors, Succeeded = !result.IsValid });
             }
             person = await _personService.Update(person);
-            Log.Information("You have successfully updated {@name} {@surname} person", person.FirstName, person.LastName);
+            Log.Information("You have successfully updated {@Name} {@Surname} person", person.FirstName, person.LastName);
             return Ok(new Response<PersonDto> { Data = person, Message = "You have successfully added a person", Succeeded = person.Id > 0 });
         }
     }

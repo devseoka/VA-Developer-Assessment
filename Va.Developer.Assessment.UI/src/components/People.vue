@@ -124,7 +124,7 @@
       </div>
     </div>
   </section>
-  <Add />
+  <Add @user-added-event="add" />
 </template>
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
@@ -133,6 +133,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
 import { Modal, type ModalOptions } from 'flowbite';
 import Add from './modals/Add.vue';
+import axios from 'axios';
 
 const query = ref<string>('');
 
@@ -148,7 +149,7 @@ const $modalEl = document.querySelector('#add-user') as HTMLElement;
 const modalOptions: ModalOptions = {
   placement: 'center-right',
   backdrop: 'dynamic',
-  closable: true,
+  closable: false,
   backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
 }
 
@@ -168,22 +169,19 @@ const initFuse = () => {
 
 watch(users, initFuse, { immediate: true });
 
-const getUsers = async () => {
-  try {
-    const response = await fetch(`http://localhost:5209/api/persons`);
-    const result: Response<User[]> = await response.json();
-    users.value = result.data
-    users.value = users.value.map((user) => {
-      return {
-        ...user,
-        firstName: user.firstName.toLowerCase(),
-        lastName: user.lastName.toLowerCase(),
-      };
-    });
-    total.value = users.value.length
-  } catch (error) {
-    console.error('An unexpected error occurred while retrieving users:', JSON.stringify(error));
-  }
+const getUsers = () => {
+  axios.get<Response<User[]>>('http://localhost:5209/api/persons').then((response) => {
+      users.value = response.data.data.map((user) => {
+        return {
+          ...user,
+          firstName: user.firstName.toLowerCase(),
+          lastName: user.lastName.toLowerCase(),
+        };
+      });
+      total.value = users.value.length
+    }).catch((err) => {
+      console.error('An unexpected error occurred while retrieving users:', JSON.stringify(err));
+    })
 };
 onMounted(() => {
   getUsers();
@@ -222,6 +220,10 @@ const filteredUsers = computed(() => {
 const redirectPage = (page: number) => {
   currentPage.value = page
 }
-
+const add = (user: User) => {
+  users.value.push(user);
+  total.value = users.value.length;
+  initFuse();
+}
 
 </script>
