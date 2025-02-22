@@ -23,7 +23,7 @@
           </div>
           <div
             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-            <button type="button"
+            <button type="button" data-modal-target="add-user" data-modal-toggle="add-user" @click="onShow"
               class="flex items-center justify-center text-white bg-assessment-secondary-500 hover:bg-assessment-secondary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none">
               Add new user
             </button>
@@ -124,12 +124,15 @@
       </div>
     </div>
   </section>
+  <Add />
 </template>
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
 import { computed, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
+import { Modal, type ModalOptions } from 'flowbite';
+import Add from './modals/Add.vue';
 
 const query = ref<string>('');
 
@@ -140,6 +143,14 @@ const total = ref<number>(0)
 const searchResults = ref<User[]>([])
 const users = ref<User[]>([])
 const fuse = ref<Fuse<User> | null>(null);
+
+const $modalEl = document.querySelector('#add-user') as HTMLElement;
+const modalOptions: ModalOptions = {
+  placement: 'center-right',
+  backdrop: 'dynamic',
+  closable: true,
+  backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
+}
 
 const initFuse = () => {
   if (users.value && users.value.length > 0) {
@@ -176,7 +187,15 @@ const getUsers = async () => {
 };
 onMounted(() => {
   getUsers();
+
+
 });
+const onShow = () => {
+  if ($modalEl) {
+    const modal = new Modal($modalEl, modalOptions);
+    modal.show()
+  }
+}
 
 const onSearch = (search: string) => {
   if (search.trim() !== '' && users.value.length > 0 && fuse.value) {
