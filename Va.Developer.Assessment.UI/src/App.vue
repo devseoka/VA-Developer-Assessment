@@ -9,5 +9,12 @@
 import  Navbar  from '@/components/Navbar.vue'
 import  Footer  from '@/components/Footer.vue'
 import  People from '@/components/People.vue';
+import { onMounted } from 'vue';
+import { initFlowbite } from 'flowbite';
+
+
+onMounted(() => {
+  initFlowbite()
+})
 </script>
 
