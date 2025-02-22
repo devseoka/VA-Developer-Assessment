@@ -48,8 +48,8 @@
             <span class="flex flex-col">{{ account.accountNo }}</span>
           </td>
           <td class="px-4 py-3 flex items-center justify-end">
-            <button id="apple-imac-27-dropdown-button" data-dropdown-toggle="apple-imac-27-dropdown"
-              class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100"
+            <button :id="'dropdown-button-' + user.id" :data-dropdown-toggle="'dropdown-' + user.id"
+              class="inline-flex items-center p-0.5 text-sm font-medium text-center text-assessment-secondary-500 hover:text-assessment-accent-800 rounded-lg focus:outline-none cursor-pointer"
               type="button">
               <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20"
                 xmlns="http://www.w3.org/2000/svg">
@@ -57,17 +57,16 @@
                   d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
               </svg>
             </button>
-            <div id="apple-imac-27-dropdown"
-              class="hidden z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
-              <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+            <div :id="'dropdown-' + user.id"
+              class="hidden z-10 w-44 bg-white rounded divide-y divide-assessment-accent-500 shadow">
+              <ul class="py-1 text-sm text-gray-700" :aria-labelledby="'dropdown-button-' + user.id">
                 <li>
-                  <a href="#"
-                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                  <a href="#" class="block py-2 px-4 hover:bg-assessment-accent-100">Edit</a>
                 </li>
               </ul>
               <div class="py-1">
-                <a href="#"
-                  class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                <a @click.prevent="onDelete(user)"
+                  class="block py-2 px-4 text-sm text-assessment-primary-500 hover:bg-assessment-primary-100">Delete</a>
               </div>
             </div>
           </td>
@@ -75,15 +74,16 @@
       </tbody>
     </table>
   </div>
-  <TableFooter :current-page="1" :total="20" :items-per-page="10" />
+  <TableFooter :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
+  <Toast v-if="toastType" :type="toastType" :message="message" />
   <Add @user-added-event="add" :modal="modal" />
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
-import { Modal, type ModalInterface, type ModalOptions } from 'flowbite';
+import { Dropdown, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import Add from '@/components/modals/Add.vue';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import TableFooter from '@/components/table/TableFooter.vue';
 import TableHeader from '@/components/table/TableHeader.vue';
 import type { User } from '@/models/user.model';
@@ -91,10 +91,11 @@ import type { Response } from '@/models/response.model';
 
 
 const query = ref<string>('');
-
+const message = ref<string>('');
+const succeeded = ref<boolean>(false);
+const toastType = ref<string>('')
 const itemsPerPage = ref<number>(10)
 const currentPage = ref<number>(1)
-const total = ref<number>(0)
 
 const searchResults = ref<User[]>([])
 const users = ref<User[]>([])
@@ -121,12 +122,27 @@ const initFuse = () => {
       threshold: 0.3
     });
   }
+
+  nextTick(() => {
+    users.value.forEach(user => {
+      const $targetEl = document.getElementById('dropdown-' + user.id)
+      const $triggerEl = document.getElementById('dropdown-button-' + user.id)
+
+      if ($targetEl && $triggerEl) {
+        new Dropdown($targetEl, $triggerEl, {
+          placement: 'bottom',
+          triggerType: 'click'
+        })
+      }
+    })
+  })
 };
 
 watch(users, initFuse, { immediate: true });
 
-const getUsers = () => {
-  axios.get<Response<User[]>>('http://localhost:5209/api/persons').then((response) => {
+const getUsers = async () => {
+  try {
+    var response = (await axios.get<Response<User[]>>('http://localhost:5209/api/persons'))
     users.value = response.data.data.map((user) => {
       return {
         ...user,
@@ -134,11 +150,11 @@ const getUsers = () => {
         lastName: user.lastName.toLowerCase(),
       };
     });
-    total.value = users.value.length
-  }).catch((err) => {
-    console.error('An unexpected error occurred while retrieving users:', JSON.stringify(err));
-  })
+  }
+  catch (e) {
+  }
 };
+const total = computed(() => users.value.length);
 onMounted(() => {
   getUsers();
   if ($modalEl) {
@@ -166,7 +182,26 @@ const filteredUsers = computed(() => {
 });
 const add = (user: User) => {
   users.value.push(user);
-  total.value = users.value.length;
   modal.hide();
+}
+const onDelete = async (user:  User) => {
+  try
+  {
+    const response = await axios.delete(`http://localhost:5209/api/persons/${user.id}`);
+    if(response.status === 204)
+    {
+      const index = users.value.findIndex((u) => u.id === user.id);
+      users.value.splice(index, 1);
+      message.value = `${user.firstName} ${user.lastName} record was deleted successfully`;
+      succeeded.value = true;
+      toastType.value = 'success';
+    }
+  }
+  catch(e){
+    message.value = `An unexpected error occured while deleting ${user.firstName} ${user.lastName} record.`;
+    succeeded.value = false;
+    toastType.value = 'error';
+  }
+
 }
 </script>

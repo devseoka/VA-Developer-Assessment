@@ -45,16 +45,16 @@ namespace Va.Developer.Assessment.Api.Endpoints
             }
             return Ok(new Response<PersonDto> { Data = person, Succeeded = true });
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var person = await _personService.GetPersonById(id);
             if (person is null)
             {
-                string message = "Selected person does not exists";
+                string message = "Selected user does not exists";
                 return BadRequest(new ErrorResponse { Errors = [message], Message = message });
             }
-            await _personService.Update(person);
+            await _personService.Delete(person);
             return NoContent();
         }
 
