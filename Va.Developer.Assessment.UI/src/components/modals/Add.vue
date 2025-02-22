@@ -21,9 +21,11 @@
         <!-- Modal body -->
         <form class="p-4 md:p-5" @submit.prevent="onSubmit">
           <div class="grid gap-4 mb-4 grid-cols-2">
-            <div v-if="errors.values.length > 0" class="col-span-2">
-              <p v-for="error in errors.values()" :key="error" class="mt-2 text-sm text-assessment-primary-600 capitalize">
-                {{ error }}</p>
+            <div v-if="messages.length > 0" class="col-span-2">
+              <p v-for="(message, index) in messages" :key="index" :class="succeeded ?
+                'mt-2 text-sm text-assessment-accent-600 capitalize'
+                : 'mt-2 text-sm text-assessment-primary-600 capitalize'">
+                {{ message }}</p>
             </div>
             <div class="col-span-2 sm:col-span-1">
               <label for="fisrtName" class="block mb-2 text-sm font-medium text-assessment-secondary-600">First
@@ -81,11 +83,11 @@
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
-import { onMounted, reactive, ref, type PropType } from 'vue';
+import { reactive, ref, type PropType } from 'vue';
 import { useVuelidate } from '@vuelidate/core'
 import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
-import { Modal, type InstanceOptions, type ModalInterface, type ModalOptions } from 'flowbite';
+import { type ModalInterface } from 'flowbite';
 
 const props = defineProps({
   modal: Object as PropType<ModalInterface>,
@@ -101,8 +103,9 @@ const initForm = () => {
     accounts: []
   });
 }
+const succeeded = ref<boolean>(false)
 const form = initForm();
-const errors = ref<string[]>([])
+const messages = ref<string[]>([])
 const onUserAdded = defineEmits<{ (e: 'user-added-event', user: User): void }>()
 const endoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
@@ -112,14 +115,17 @@ const onSubmit = async () => {
   }
   try {
     var response = (await axios.post<Response<User>>(endoint, form)).data;
+    messages.value = [response.message]
+    succeeded.value = response.succeeded;
     onUserAdded('user-added-event', response.data);
     onHide()
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== undefined) {
       var err = (e.response?.data.errors as string[])
-      errors.value = err.length > 0 ? err : e.response?.data.errors;
-      console.log('Error adding user', JSON.stringify(errors.value));
+      succeeded.value = false;
+      messages.value = err.length > 0 ? err : e.response?.data.errors;
+      console.log('Error adding user', JSON.stringify(messages.value));
     }
     onShow()
   }
