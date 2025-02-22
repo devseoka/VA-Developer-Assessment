@@ -186,8 +186,9 @@ const getUsers = () => {
 };
 onMounted(() => {
   getUsers();
-  modal = new Modal($modalEl, modalOptions);
-
+  if($modalEl){
+    modal = new Modal($modalEl, modalOptions);
+  }
 });
 const onShow = () => {
   if ($modalEl) {

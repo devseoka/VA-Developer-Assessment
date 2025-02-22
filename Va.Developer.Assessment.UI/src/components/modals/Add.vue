@@ -21,6 +21,10 @@
         <!-- Modal body -->
         <form class="p-4 md:p-5" @submit.prevent="onSubmit">
           <div class="grid gap-4 mb-4 grid-cols-2">
+            <div v-if="errors.values.length > 0" class="col-span-2">
+              <p v-for="error in errors.values()" :key="error" class="mt-2 text-sm text-assessment-primary-600 capitalize">
+                {{ error }}</p>
+            </div>
             <div class="col-span-2 sm:col-span-1">
               <label for="fisrtName" class="block mb-2 text-sm font-medium text-assessment-secondary-600">First
                 Name:</label>
@@ -81,7 +85,7 @@ import { onMounted, reactive, ref, type PropType } from 'vue';
 import { useVuelidate } from '@vuelidate/core'
 import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
-import type { ModalInterface, ModalOptions } from 'flowbite';
+import { Modal, type InstanceOptions, type ModalInterface, type ModalOptions } from 'flowbite';
 
 const props = defineProps({
   modal: Object as PropType<ModalInterface>,
@@ -100,16 +104,6 @@ const initForm = () => {
 const form = initForm();
 const errors = ref<string[]>([])
 const onUserAdded = defineEmits<{ (e: 'user-added-event', user: User): void }>()
-onMounted(() => {
-  const $modal = document.getElementById('add-user');
-  const options: ModalOptions = {
-    placement: 'center',
-    backdrop: 'dynamic',
-    closable: true,
-    backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
-  }
-})
-
 const endoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
 const onSubmit = async () => {
@@ -123,20 +117,20 @@ const onSubmit = async () => {
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== undefined) {
-      var err =  (e.response?.data.errors as string[])
-      errors.value =  err.length > 0 ? err : e.response?.data.errors;
+      var err = (e.response?.data.errors as string[])
+      errors.value = err.length > 0 ? err : e.response?.data.errors;
       console.log('Error adding user', JSON.stringify(errors.value));
     }
-     onShow()
+    onShow()
   }
 }
 const onShow = () => {
-  if(modal){
-     modal.show()
+  if (modal) {
+    modal.show()
   }
 }
 const onHide = () => {
-  if(modal){
+  if (modal) {
     modal.hide()
   }
 }
