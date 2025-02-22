@@ -7,8 +7,8 @@ public static class ServiceProviderExtensions
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<VaDeveloperContext>();
-        context.Database.Migrate();
-        context.Database.ExecuteSqlRaw(@"IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'audit')
+       await context.Database.MigrateAsync();
+       await  context.Database.ExecuteSqlRawAsync(@"IF NOT EXISTS (SELECT 1 FROM sys.schemas WHERE name = 'audit')
 			BEGIN EXEC('CREATE SCHEMA audit'); END");
 
         return serviceProvider;

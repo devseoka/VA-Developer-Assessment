@@ -8,7 +8,7 @@
           <h3 class="text-lg font-semibold text-assessment-primary-500">
             Create New User
           </h3>
-          <button type="button" @click.prevent="modal.hide()"
+          <button type="button" @click.prevent="onHide"
             class="text-assessment-primary-500 bg-transparent hover:bg-assessment-primary-300 hover:text-assessment-primary-700 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-cente"
             data-modal-toggle="add-user">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -77,13 +77,17 @@
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, type PropType } from 'vue';
 import { useVuelidate } from '@vuelidate/core'
 import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
-import { Modal, type ModalInterface, type ModalOptions } from 'flowbite';
+import type { ModalInterface, ModalOptions } from 'flowbite';
 
+const props = defineProps({
+  modal: Object as PropType<ModalInterface>,
+});
 
+const { modal } = props
 const initForm = () => {
   return reactive<User>({
     firstName: '',
@@ -93,8 +97,6 @@ const initForm = () => {
     accounts: []
   });
 }
-
-let modal: ModalInterface;
 const form = initForm();
 const errors = ref<string[]>([])
 const onUserAdded = defineEmits<{ (e: 'user-added-event', user: User): void }>()
@@ -106,27 +108,36 @@ onMounted(() => {
     closable: true,
     backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
   }
-  modal = new Modal($modal, options);
 })
 
 const endoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
 const onSubmit = async () => {
   if (v$.value.$invalid) {
-    modal.show()
     return;
   }
   try {
     var response = (await axios.post<Response<User>>(endoint, form)).data;
     onUserAdded('user-added-event', response.data);
-    modal.hide();
+    onHide()
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== undefined) {
-      errors.value = e.response?.data;
+      var err =  (e.response?.data.errors as string[])
+      errors.value =  err.length > 0 ? err : e.response?.data.errors;
       console.log('Error adding user', JSON.stringify(errors.value));
     }
-    modal.show();
+     onShow()
+  }
+}
+const onShow = () => {
+  if(modal){
+     modal.show()
+  }
+}
+const onHide = () => {
+  if(modal){
+    modal.hide()
   }
 }
 </script>

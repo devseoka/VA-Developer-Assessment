@@ -22,7 +22,7 @@ namespace Va.Developer.Assessment.Api.Endpoints
             if (!response.Succeeded)
             {
                 Log.Error("An error occured while adding a user. Error: {Message}",response.Message);
-                return BadRequest(response.Message);
+                return BadRequest(response);
             }
             Log.Information(response.Message, person.FirstName, person.LastName);
             return Ok(response);

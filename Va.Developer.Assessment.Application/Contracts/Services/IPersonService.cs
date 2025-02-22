@@ -8,7 +8,7 @@ namespace Va.Developer.Assessment.Application.Contracts.Services
         Task<IResponse> Add(PersonDto person);
         Task Delete(PersonDto person);
         Task<PersonDto> Update(PersonDto person);
-        Task<PersonDto> GetPersonById(int code);
-        Task<PersonDto> GetPersonByIdNumber(string code);
+        Task<PersonDto> GetPersonById(int id);
+        Task<PersonDto> GetPersonByIdNumber(string id);
     }
 }

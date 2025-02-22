@@ -124,14 +124,14 @@
       </div>
     </div>
   </section>
-  <Add @user-added-event="add" />
+  <Add @user-added-event="add" :modal="modal"/>
 </template>
 <script setup lang="ts">
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
 import { computed, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
-import { Modal, type ModalOptions } from 'flowbite';
+import { Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import Add from './modals/Add.vue';
 import axios from 'axios';
 
@@ -152,6 +152,7 @@ const modalOptions: ModalOptions = {
   closable: false,
   backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
 }
+let modal: ModalInterface
 
 const initFuse = () => {
   if (users.value && users.value.length > 0) {
@@ -171,26 +172,26 @@ watch(users, initFuse, { immediate: true });
 
 const getUsers = () => {
   axios.get<Response<User[]>>('http://localhost:5209/api/persons').then((response) => {
-      users.value = response.data.data.map((user) => {
-        return {
-          ...user,
-          firstName: user.firstName.toLowerCase(),
-          lastName: user.lastName.toLowerCase(),
-        };
-      });
-      total.value = users.value.length
-    }).catch((err) => {
-      console.error('An unexpected error occurred while retrieving users:', JSON.stringify(err));
-    })
+    users.value = response.data.data.map((user) => {
+      return {
+        ...user,
+        firstName: user.firstName.toLowerCase(),
+        lastName: user.lastName.toLowerCase(),
+      };
+    });
+    total.value = users.value.length
+  }).catch((err) => {
+    console.error('An unexpected error occurred while retrieving users:', JSON.stringify(err));
+  })
 };
 onMounted(() => {
   getUsers();
-
+  modal = new Modal($modalEl, modalOptions);
 
 });
 const onShow = () => {
   if ($modalEl) {
-    const modal = new Modal($modalEl, modalOptions);
+
     modal.show()
   }
 }
@@ -223,6 +224,7 @@ const redirectPage = (page: number) => {
 const add = (user: User) => {
   users.value.push(user);
   total.value = users.value.length;
+  modal.hide();
   initFuse();
 }
 

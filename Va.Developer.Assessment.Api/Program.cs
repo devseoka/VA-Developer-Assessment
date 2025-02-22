@@ -34,14 +34,14 @@ try
     }
     app.UseExceptionHandler();
     app.UseCors(CORS_ORIGINGS);
-    
-    app.Services.CreateSchema().Wait();
+
+    await app.Services.CreateSchema();
 
     app.UseHttpsRedirection();
     app.MapControllers();
 
 
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception ex) when (ex is not HostAbortedException)
 {
@@ -55,5 +55,5 @@ catch (Exception ex) when (ex is not HostAbortedException)
 }
 finally
 {
-    Log.CloseAndFlush();
+   await Log.CloseAndFlushAsync();
 }

@@ -17,7 +17,8 @@ namespace Va.Developer.Assessment.Application.Services
             var entity = _mapper.Map<Person>(person);
             if(await People.AnyAsync(p => p.IdNo == person.IdNo))
             {
-                return new Response<PersonDto> { Message = "Id number already exists", Succeeded = false };
+                string message = "Id number already exists";
+                return new ErrorResponse { Message = message, Succeeded = false, Errors = [message] };
             }
             entity = await _personRepostiory.Add(entity);
             person = _mapper.Map<PersonDto>(entity);
@@ -48,9 +49,9 @@ namespace Va.Developer.Assessment.Application.Services
                         .ToListAsync();
         }
 
-        public async Task<PersonDto> GetPersonById(int code)
+        public async Task<PersonDto> GetPersonById(int id)
         {
-            return await People.FirstOrDefaultAsync(p => p.Id == code);
+            return await People.FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<PersonDto> GetPersonByIdNumber(string id)
