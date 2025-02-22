@@ -35,7 +35,7 @@ try
     app.UseExceptionHandler();
     app.UseCors(CORS_ORIGINGS);
     
-    app.Services.EnsurerDatabaseCreate().Wait();
+    app.Services.CreateSchema().Wait();
 
     app.UseHttpsRedirection();
     app.MapControllers();

@@ -3,7 +3,7 @@ namespace Va.Developer.Assessment.Infrastructure.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static async Task<IServiceProvider> EnsurerDatabaseCreate(this IServiceProvider serviceProvider)
+    public static async Task<IServiceProvider> CreateSchema(this IServiceProvider serviceProvider)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         var context = scope.ServiceProvider.GetRequiredService<VaDeveloperContext>();
