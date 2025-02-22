@@ -4,5 +4,5 @@ export interface User {
   lastName: string
   idNo: string
   accounts: Account[]
-  id: number
+  id: string
 }

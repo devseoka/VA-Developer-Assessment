@@ -25,20 +25,20 @@
             <div class="col-span-2 sm:col-span-1">
               <label for="fisrtName" class="block mb-2 text-sm font-medium text-assessment-secondary-600">First
                 Name:</label>
-              <input type="text" id="fisrtName"
+              <input type="text" id="fisrtName" v-model="form.firstName"
                 class="bg-gray-50 border border-gray-300 text-assessment-secondary-700 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full  p-2.5"
                 placeholder="Joe" required>
             </div>
             <div class="col-span-2 sm:col-span-1">
               <label for="lastName" class="block mb-2 text-sm font-medium text-assessment-secondary-600">Last
                 Name</label>
-              <input type="text" id="lastName"
+              <input type="text" id="lastName" v-model="form.lastName"
                 class="bg-gray-50 border border-gray-300 text-assessment-secondary-700 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full p-2.5"
                 placeholder="Smith" required>
             </div>
             <div class="col-span-2">
               <label for="idNo" class="block mb-2 text-sm font-medium text-assessment-secondary-600">Id No:</label>
-              <input type="text" id="idNo"
+              <input type="text" id="idNo" v-model="form.idNo"
                 class="bg-gray-50 border border-gray-300 text-assessment-secondary-700 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full p-2.5"
                 placeholder="South African Id Number" required>
             </div>
@@ -58,3 +58,18 @@
     </div>
   </div>
 </template>
+<script setup lang="ts">
+import type { User } from '@/models/user.model';
+import { reactive } from 'vue';
+
+
+const form = reactive<Partial<User>>({
+  firstName: '',
+  lastName: '',
+  idNo: '',
+});
+
+const onSubmit = () => {
+    const uri = 'https://localhost:5001/api/users';
+}
+</script>
