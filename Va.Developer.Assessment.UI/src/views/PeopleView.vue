@@ -75,19 +75,20 @@
       </tbody>
     </table>
   </div>
-  <TableFooter :current-page="currentPage" :total="total" :items-per-page="itemsPerPage" />
+  <TableFooter :current-page="1" :total="20" :items-per-page="10" />
   <Add @user-added-event="add" :modal="modal" />
 </template>
 <script setup lang="ts">
-import TableFooter from '@/components/table/TableFooter.vue';
-import TableHeader from '@/components/table/TableHeader.vue';
-import type { User } from '@/models/user.model';
-import type { Response } from '@/models/response.model';
 import { computed, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
 import { Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import Add from '@/components/modals/Add.vue';
 import axios from 'axios';
+import TableFooter from '@/components/table/TableFooter.vue';
+import TableHeader from '@/components/table/TableHeader.vue';
+import type { User } from '@/models/user.model';
+import type { Response } from '@/models/response.model';
+
 
 const query = ref<string>('');
 
@@ -146,7 +147,6 @@ onMounted(() => {
 });
 const onShow = () => {
   if ($modalEl) {
-
     modal.show()
   }
 }
@@ -158,28 +158,15 @@ const onSearch = (search: string) => {
     currentPage.value = 1;
   }
 }
-const onPrevious = () => {
-  if (currentPage.value > 1) currentPage.value--;
-}
-const onNext = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-}
-const totalPages = computed(() => {
-  return Math.ceil(total.value / itemsPerPage.value);
-});
 const filteredUsers = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   const source = query.value.trim() !== '' ? searchResults.value : users.value;
   return source.slice(start, end);
 });
-const redirectPage = (page: number) => {
-  currentPage.value = page
-}
 const add = (user: User) => {
   users.value.push(user);
   total.value = users.value.length;
   modal.hide();
-  initFuse();
 }
 </script>

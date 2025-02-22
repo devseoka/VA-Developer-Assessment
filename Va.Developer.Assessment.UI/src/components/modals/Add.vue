@@ -118,6 +118,7 @@ const onSubmit = async () => {
     messages.value = [response.message]
     succeeded.value = response.succeeded;
     onUserAdded('user-added-event', response.data);
+    initForm()
     onHide()
   }
   catch (e) {
