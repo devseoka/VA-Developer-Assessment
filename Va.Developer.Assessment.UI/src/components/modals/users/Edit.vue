@@ -57,12 +57,13 @@
               <template v-if="v$.idNo.$error && !v$.idNo.$pending">
                 <p class="mt-2 text-sm text-assessment-primary-600 capitalize" v-if="v$.idNo.numeric.$invalid">Id
                   number must be numeric. </p>
-                <p v-if="v$.idNo.minLength.$invalid" class="mt-2 text-sm text-assessment-primary-600 capitalize">Id
+                <p v-if="v$.idNo.minLength.$invalid || v$.idNo.maxLength.$invalid" class="mt-2 text-sm text-assessment-primary-600 capitalize">Id
                   Number must have 13 characters</p>
+
               </template>
             </div>
           </div>
-          <button type="submit"
+          <button type="submit" :disabled="v$.$invalid"
             class="text-white capitalize inline-flex items-center justify-center bg-assessment-accent-500 hover:bg-assessment-accent-800 focus:ring-4 focus:outline-none focus:ring-assessment-accent-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-full">
             <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd"
@@ -86,6 +87,7 @@ import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
 import { Modal, type ModalInterface } from 'flowbite';
 import { onMounted } from 'vue';
+import router from '@/router';
 
 
 const props = defineProps({
@@ -106,21 +108,26 @@ const messages = ref<string[]>([])
 const onUserAdded = defineEmits<{ (e: 'user-update-event', user: Response<User>): void }>()
 const endpoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
+
 const onSubmit = async () => {
+  v$.value.$touch()
+  onHide()
   if (v$.value.$invalid) {
+    onShow()
     return;
   }
   try {
+
     const uri = `${endpoint}/${form.id}`
     var response = (await axios.put<Response<User>>(uri, form))
     var result = response.data
     messages.value = [result.message]
     succeeded.value = result.succeeded;
     result.data.accounts = user.accounts
-    Object.assign(form, response.data)
-    onUserAdded('user-update-event', result);
+    Object.assign(form, result.data)
     initForm()
     onHide()
+    onUserAdded('user-update-event', result)
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {
@@ -145,7 +152,7 @@ onMounted(() => {
       placement: 'center-right',
       backdrop: 'dynamic',
       backdropClasses:
-        'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+        'bg-gray-900/50 fixed inset-0 z-40',
     })
   }
 })

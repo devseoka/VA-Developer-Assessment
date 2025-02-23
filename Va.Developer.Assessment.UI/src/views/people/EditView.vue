@@ -9,9 +9,9 @@
         </h2>
         <p class="mb-2 text-assessment-primary-500 uppercase">{{ editForm.idNo }}</p>
       </div>
-      <button type="button" data-modal-target="edit-user" data-modal-toggle="edit-user"
+      <button type="button" data-modal-target="edit-user" data-modal-toggle="edit-user" @click.prevent="onShow"
         class="py-3 px-2 bg-assessment-accent-500 text-center text-assessment-accent-50 font-bold capitalize rounded shadow cursor-pointer focus:ring-4 focus:ring-assessment-accent-300 hover:bg-assessment-accent-700 mx-2 focus:outline-none">Edit
-        {{ editForm.firstName }} {{ editForm.lastName }}'s Details</button>
+        {{ editForm.lastName }}'s Details</button>
     </div>
     <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white text-assessment-secondary-900"
       data-inactive-classes="text-assessment-secondary-500">
@@ -58,7 +58,7 @@ const route = useRoute();
 const router = useRouter();
 const userId = route.params.id;
 let modal: ModalInterface;
-const toast = ref<{ message: string, type: string}>({
+const toast = ref<{ message: string, type: string }>({
   message: '',
   type: 'success'
 })
@@ -110,6 +110,9 @@ const initModal = () => {
       backdrop: 'dynamic',
       backdropClasses:
         'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+      onHide: () => {
+        get()
+      }
     }
     modal = new Modal($modalEl, modalOptions);
   }
@@ -118,6 +121,11 @@ const onUpdated = (response: Response<User>) => {
   Object.assign(editForm, response.data)
   toast.value.message = response.message
   toast.value.type = response.succeeded ?
-  'success' : 'error'
+    'success' : 'error'
+  const $modalEl = document.getElementById('edit-user')
+  if ($modalEl) {
+    $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+  }
+  modal.hide()
 }
 </script>

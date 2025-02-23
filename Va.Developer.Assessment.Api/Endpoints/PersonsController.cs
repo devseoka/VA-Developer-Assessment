@@ -1,6 +1,8 @@
 
 
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Va.Developer.Assessment.Api.Endpoints
 {
     public partial class PersonsController(IPersonService personService, IValidator<PersonDto> personValidator) : ApiBaseController
@@ -86,6 +88,12 @@ namespace Va.Developer.Assessment.Api.Endpoints
             existing.FirstName = person.FirstName;
             existing.LastName = person.LastName;
             existing.IdNo = person.IdNo;
+
+            if(await _personService.People.AnyAsync(p => p.IdNo == existing.IdNo))
+            {
+                string message = "Id Number already exists";
+                return BadRequest(new ErrorResponse { Errors = [message], Message = message });
+            }
             
             person = await _personService.Update(person);
             Log.Information("You have successfully updated {@Name} {@Surname} person", person.FirstName, person.LastName);
