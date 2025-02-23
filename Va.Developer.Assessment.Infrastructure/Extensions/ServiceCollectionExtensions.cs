@@ -11,9 +11,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection ConfigureDbContext(this IServiceCollection services, string connection){
         services.AddDbContext<VaDeveloperContext>((options) => {
-            options.UseSqlServer( connectionString: connection, (action) => {
-                action.EnableRetryOnFailure();
-            });
+            options.UseSqlServer( connectionString: connection);
             options.EnableDetailedErrors();
             options.EnableSensitiveDataLogging();
         });

@@ -14,6 +14,7 @@ namespace Va.Developer.Assessment.Application.Extensions
             services.TryAddScoped<IPersonService, PersonService>();
             services.TryAddScoped<IAccountService, AccountService>();
             services.TryAddScoped<ITransactionManager, TransactionManager>();
+            services.TryAddScoped<ITransactionService, TransactionService>();
             return services;
         }
         public static IServiceCollection EnableCors(this IServiceCollection services, string name)

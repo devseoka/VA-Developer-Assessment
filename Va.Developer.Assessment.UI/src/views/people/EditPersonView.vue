@@ -37,7 +37,9 @@
           <p class="mb-2 text-assessment-secondary-500 font-semibold">Number of Transactions: {{
             account.transactions?.length || 0 }}</p>
           <p class="mb-2 text-assessment-secondary-500">Balance: {{ useCurrency(account.balance).formattedPrice }}</p>
-          <a :href="`/accounts/${account.id}`" class="text-sm font-semibold text-assessment-accent-500 hover:text-base hover:text-assessment-accent-700 flex justify-end mx-2">Edit Account</a>
+          <a :href="`/accounts/${account.id}`"
+            class="text-sm font-semibold text-assessment-accent-500 hover:text-base hover:text-assessment-accent-700 flex justify-end mx-2">Edit
+            Account</a>
         </div>
 
       </div>

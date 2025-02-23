@@ -10,7 +10,7 @@ public class TransactionValidator : AbstractValidator<TransactionDto>
         RuleFor(x => x.Total)
          .NotEmpty()
          .WithMessage("Transaction amount is required")
-         .Equal(0)
-         .WithMessage("Transaction should not be less or equal to zero");
+         .NotEqual(0)
+         .WithMessage("Transaction amount should not be equal to zero");
     }
 }

@@ -34,17 +34,15 @@ namespace Va.Developer.Assessment.Api.Endpoints
             return Ok(new Response<AccountDto> { Succeeded = true, Data = account });
         }
         [HttpPatch("{code}")]
-        public async Task<IActionResult> Update([FromRoute] int code, JsonPatchDocument<AccountDto> document)
+        public async Task<IActionResult> Update([FromRoute] int code, [FromBody]AccountDto account)
         {
-            var account = await _accountService.GetAccountById(code);
-            if (account is null)
+            Account = await _accountService.GetAccountById(code);
+            if (Account is null)
             {
                 var message = "Selected account does not exists";
                 var result = new ErrorResponse { Errors = [message], Message = message };
                 return BadRequest(result);
             }
-            Account = account;
-            document.ApplyTo(account);
             if (Account.Balance != account.Balance)
             {
                 var message = "You are not allowed to update account balance";

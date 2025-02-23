@@ -17,7 +17,7 @@ namespace Va.Developer.Assessment.Application.Services
                 var account = await _accountService.GetAccountById(transaction.AccountId);
                 if (account is null)
                 {
-                    string message = "You cannot be add transaction to closed or deleted accounts";
+                    string message = "Selected account for the transaction is closed or deleted";
                     return new ErrorResponse { Errors = [message], Message = message, Succeeded = false };
                 }
                 if (transaction.Total == 0)
