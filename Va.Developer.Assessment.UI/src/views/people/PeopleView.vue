@@ -82,7 +82,7 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
 import { Dropdown, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
-import Add from '@/components/modals/User/Add.vue';
+import Add from '@/components/modals/users/Add.vue';
 import axios, { AxiosError } from 'axios';
 import TableFooter from '@/components/table/TableFooter.vue';
 import TableHeader from '@/components/table/TableHeader.vue';

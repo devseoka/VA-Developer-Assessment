@@ -1,9 +1,18 @@
 <template>
   <div v-if="editForm">
-    <h2 class="text-2xl font-bold text-assessment-secondary-500 capitalize">
-      {{ editForm.firstName }} {{ editForm.lastName }}
-    </h2>
-    <p class="mb-2 text-assessment-primary-500 uppercase">{{ editForm.idNo }}</p>
+    <Edit @user-update-event="onUpdated" :user="editForm" :modal="modal" />
+    <Toaster v-if="toast.message" :duration="3000" :message="toast.message" :type="toast.type" />
+    <div class="flex justify-between w-full items-center">
+      <div class="flex flex-col">
+        <h2 class="text-2xl font-bold text-assessment-secondary-500 capitalize">
+          {{ editForm.firstName }} {{ editForm.lastName }}
+        </h2>
+        <p class="mb-2 text-assessment-primary-500 uppercase">{{ editForm.idNo }}</p>
+      </div>
+      <button type="button" data-modal-target="edit-user" data-modal-toggle="edit-user"
+        class="py-3 px-2 bg-assessment-accent-500 text-center text-assessment-accent-50 font-bold capitalize rounded shadow cursor-pointer focus:ring-4 focus:ring-assessment-accent-300 hover:bg-assessment-accent-700 mx-2 focus:outline-none">Edit
+        {{ editForm.firstName }} {{ editForm.lastName }}'s Details</button>
+    </div>
     <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white text-assessment-secondary-900"
       data-inactive-classes="text-assessment-secondary-500">
       <h2 id="accordion-flush-heading-1" class="text-2xl font-bold text-assessment-accent-500">
@@ -35,17 +44,24 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, nextTick } from 'vue';
+import { reactive, onMounted, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
-import { initAccordions } from 'flowbite';
+import { initAccordions, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
 import { useCurrency } from '@/extensions/currency.pipe';
+import Edit from '@/components/modals/users/Edit.vue';
+import Toaster from '@/components/shared/Toaster.vue';
 
 const route = useRoute();
 const router = useRouter();
 const userId = route.params.id;
+let modal: ModalInterface;
+const toast = ref<{ message: string, type: string}>({
+  message: '',
+  type: 'success'
+})
 
 const editForm = reactive<User>({
   id: 0,
@@ -74,9 +90,34 @@ const get = async () => {
     Object.assign(editForm, user);
     await nextTick();
     initAccordions();
+    initModal()
   } catch (error) {
     console.error('Failed to fetch user data:', error);
     router.push('/users');
   }
 };
+const onShow = () => {
+  if (modal) {
+    modal.show()
+  }
+}
+const initModal = () => {
+  const $modalEl = document.getElementById('edit-user');
+  if ($modalEl) {
+    const modalOptions: ModalOptions = {
+      closable: true,
+      placement: 'center-right',
+      backdrop: 'dynamic',
+      backdropClasses:
+        'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+    }
+    modal = new Modal($modalEl, modalOptions);
+  }
+}
+const onUpdated = (response: Response<User>) => {
+  Object.assign(editForm, response.data)
+  toast.value.message = response.message
+  toast.value.type = response.succeeded ?
+  'success' : 'error'
+}
 </script>
