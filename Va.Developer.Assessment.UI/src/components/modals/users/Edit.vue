@@ -5,7 +5,7 @@
       <div class="relative bg-white rounded-lg shadow-sm">
         <!-- Modal header -->
         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200">
-          <h3 class="text-lg font-semibold text-assessment-primary-500">
+          <h3 class="text-lg font-semibold text-assessment-primary-500 capitalize">
             Edit {{ form.firstName }} {{ form.lastName }}'s Details'
           </h3>
           <button type="button" @click.prevent="onHide"
@@ -24,7 +24,7 @@
             <div v-if="messages.length > 0" class="col-span-2 text-center">
               <p v-for="(message, index) in messages" :key="index" :class="succeeded ?
                 'mt-2 text-sm text-assessment-accent-600 capitalize'
-                : 'mt-2 text-sm text-assessment-primary-600 capitalize'">
+                : 'mt-2 text-sm text-assessment-primary-600  text-left'">
                 {{ message }}</p>
             </div>
             <div class="col-span-2 sm:col-span-1">
@@ -69,7 +69,7 @@
                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                 clip-rule="evenodd"></path>
             </svg>
-             Save {{ form.firstName }} {{ form.lastName }}'s Details
+            Save {{ form.firstName }} {{ form.lastName }}'s Details
           </button>
         </form>
       </div>
@@ -112,20 +112,27 @@ const onSubmit = async () => {
   }
   try {
     const uri = `${endpoint}/${form.id}`
-    var response = (await axios.patch<Response<User>>(uri, form)).data;
-    messages.value = [response.message]
-    succeeded.value = response.succeeded;
-    response.data.accounts = user.accounts
+    var response = (await axios.put<Response<User>>(uri, form))
+    var result = response.data
+    messages.value = [result.message]
+    succeeded.value = result.succeeded;
+    result.data.accounts = user.accounts
     Object.assign(form, response.data)
-    onUserAdded('user-update-event', response);
+    onUserAdded('user-update-event', result);
     initForm()
     onHide()
   }
   catch (e) {
-    if (e instanceof AxiosError && typeof e.response !== undefined) {
+    if (e instanceof AxiosError && typeof e.response !== 'undefined') {
       var err = (e.response?.data.errors as string[])
       succeeded.value = false;
-      messages.value = err.length > 0 ? err : e.response?.data.errors;
+      if (typeof err !== 'undefined') {
+        messages.value = err.length > 0 ? err : e.response?.data.errors
+      }
+      else {
+        const errors = ['An unexpected error occured. If the issue persist contact support team im@seokamoshele.digital'];
+        messages.value = errors
+      }
     }
     onShow()
   }

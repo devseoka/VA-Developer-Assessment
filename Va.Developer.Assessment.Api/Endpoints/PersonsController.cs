@@ -66,6 +66,13 @@ namespace Va.Developer.Assessment.Api.Endpoints
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute]int id, [FromBody] PersonDto person)
         {
+
+            var result = await _validator.ValidateAsync(person);
+            if (!result.IsValid)
+            {
+                var errors = result.Errors.Select(e => e.ErrorMessage);
+                return Conflict(new ErrorResponse { Errors = errors, Succeeded = !result.IsValid });
+            }
             var existing = await _personService.GetPersonById(id);
             if (person is null)
             {
@@ -80,15 +87,9 @@ namespace Va.Developer.Assessment.Api.Endpoints
             existing.LastName = person.LastName;
             existing.IdNo = person.IdNo;
             
-            var result = await _validator.ValidateAsync(person);
-            if (!result.IsValid)
-            {
-                var errors = result.Errors.Select(e => e.ErrorMessage);
-                return Conflict(new ErrorResponse { Errors = errors, Succeeded = !result.IsValid });
-            }
             person = await _personService.Update(person);
             Log.Information("You have successfully updated {@Name} {@Surname} person", person.FirstName, person.LastName);
-            return Ok(new Response<PersonDto> { Data = person, Message = "You have successfully added a person", Succeeded = person.Id > 0 });
+            return Ok(new Response<PersonDto> { Data = person, Message = "You have successfully updated a person", Succeeded = person.Id > 0 });
         }
 
         [GeneratedRegex(@"(?<=^\d{2})\d{2}(?=\d{6})")]
