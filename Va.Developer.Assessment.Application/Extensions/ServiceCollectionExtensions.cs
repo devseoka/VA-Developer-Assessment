@@ -1,6 +1,6 @@
 namespace Va.Developer.Assessment.Application.Extensions
 {
-    public static class ServiceCollections
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection ConfigureAutoMapperAndValidators(this IServiceCollection services)
         {
@@ -13,6 +13,7 @@ namespace Va.Developer.Assessment.Application.Extensions
 
             services.TryAddScoped<IPersonService, PersonService>();
             services.TryAddScoped<IAccountService, AccountService>();
+            services.TryAddScoped<ITransactionManager, TransactionManager>();
             return services;
         }
         public static IServiceCollection EnableCors(this IServiceCollection services, string name)

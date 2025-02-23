@@ -10,6 +10,8 @@ namespace Va.Developer.Assessment.Domain.Models
         public string AccountNumber { get; set; }
         [Column("outstanding_balance", TypeName = "money")]
         public decimal Balance { get; set; }
+        [Column("description")]
+        public string Description { get; set; }
         [NotMapped]
         public virtual ICollection<Transaction> Transactions {get; set;}
     }

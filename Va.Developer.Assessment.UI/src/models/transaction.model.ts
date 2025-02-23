@@ -1,6 +1,7 @@
 export interface Transaction {
   accountId: number
-  processedDate: string
+  orderedDate: Date
+  description: string
   total: number
   id: number
 }

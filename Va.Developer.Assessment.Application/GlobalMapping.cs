@@ -32,7 +32,6 @@ namespace Va.Developer.Assessment.Application
                 .ForMember(dst => dst.TransactionDate, opts => opts.MapFrom(src => src.OrderedDate))
                 .ForMember(dst => dst.CaptureDate, opts => opts.MapFrom(src => src.ProcessedDate))
                 .ForMember(dst => dst.AccountCode, opts => opts.MapFrom(src => src.AccountId))
-                .ForMember(dst => dst.CaptureDate, opts => opts.MapFrom(src => src.ProcessedDate))
                 .ForMember(dst => dst.Amount, opts => opts.MapFrom(src => src.Total))
                 .ReverseMap();
         }
