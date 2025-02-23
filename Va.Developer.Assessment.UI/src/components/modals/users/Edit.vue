@@ -8,7 +8,7 @@
           <h3 class="text-lg font-semibold text-assessment-primary-500 capitalize">
             Edit {{ form.firstName }} {{ form.lastName }}'s Details'
           </h3>
-          <button type="button" @click.prevent="onHide"
+          <button type="button"
             class="text-assessment-primary-500 bg-transparent hover:bg-assessment-primary-300 hover:text-assessment-primary-700 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-cente"
             data-modal-toggle="edit-user">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -57,7 +57,8 @@
               <template v-if="v$.idNo.$error && !v$.idNo.$pending">
                 <p class="mt-2 text-sm text-assessment-primary-600 capitalize" v-if="v$.idNo.numeric.$invalid">Id
                   number must be numeric. </p>
-                <p v-if="v$.idNo.minLength.$invalid || v$.idNo.maxLength.$invalid" class="mt-2 text-sm text-assessment-primary-600 capitalize">Id
+                <p v-if="v$.idNo.minLength.$invalid || v$.idNo.maxLength.$invalid"
+                  class="mt-2 text-sm text-assessment-primary-600 capitalize">Id
                   Number must have 13 characters</p>
 
               </template>
@@ -85,9 +86,8 @@ import { reactive, ref, type PropType } from 'vue';
 import { useVuelidate } from '@vuelidate/core'
 import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
-import { Modal, type ModalInterface } from 'flowbite';
+import { initModals, Modal, type ModalInterface } from 'flowbite';
 import { onMounted } from 'vue';
-import router from '@/router';
 
 
 const props = defineProps({
@@ -128,6 +128,10 @@ const onSubmit = async () => {
     initForm()
     onHide()
     onUserAdded('user-update-event', result)
+    const $modalEl = document.getElementById('edit-user')
+    if ($modalEl) {
+      $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+    }
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {
@@ -149,10 +153,16 @@ onMounted(() => {
   if (!modal && $modalEl) {
     modal = new Modal($modalEl, {
       closable: true,
-      placement: 'center-right',
+      placement: 'center',
       backdrop: 'dynamic',
       backdropClasses:
         'bg-gray-900/50 fixed inset-0 z-40',
+      onShow: () => {
+        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+      },
+      onHide: () => {
+        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+      }
     })
   }
 })

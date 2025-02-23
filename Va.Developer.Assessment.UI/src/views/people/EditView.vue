@@ -9,7 +9,7 @@
         </h2>
         <p class="mb-2 text-assessment-primary-500 uppercase">{{ editForm.idNo }}</p>
       </div>
-      <button type="button" data-modal-target="edit-user" data-modal-toggle="edit-user" @click.prevent="onShow"
+      <button type="button" data-modal-target="edit-user" data-modal-toggle="edit-user"
         class="py-3 px-2 bg-assessment-accent-500 text-center text-assessment-accent-50 font-bold capitalize rounded shadow cursor-pointer focus:ring-4 focus:ring-assessment-accent-300 hover:bg-assessment-accent-700 mx-2 focus:outline-none">Edit
         {{ editForm.lastName }}'s Details</button>
     </div>
@@ -33,11 +33,13 @@
       </h2>
       <div v-for="(account, index) in editForm.accounts" :key="account.id" :id="`accordion-flush-body-${index}`"
         class="hidden" :aria-labelledby="`accordion-flush-heading-${index}`">
-        <div class="py-5 border-b border-assessment-secondary-200">
+        <div class="flex flex-col py-5 border-b border-assessment-secondary-200">
           <p class="mb-2 text-assessment-secondary-500 font-semibold">Number of Transactions: {{
             account.transactions?.length || 0 }}</p>
           <p class="mb-2 text-assessment-secondary-500">Balance: {{ useCurrency(account.balance).formattedPrice }}</p>
+          <a :href="`/accounts/${account.id}`" class="text-sm font-semibold text-assessment-accent-500 hover:text-base hover:text-assessment-accent-700 flex justify-end mx-2">Edit Account</a>
         </div>
+
       </div>
     </div>
   </div>
@@ -106,12 +108,16 @@ const initModal = () => {
   if ($modalEl) {
     const modalOptions: ModalOptions = {
       closable: true,
-      placement: 'center-right',
+      placement: 'center',
       backdrop: 'dynamic',
       backdropClasses:
         'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+      onShow: () => {
+        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+      },
       onHide: () => {
         get()
+        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
       }
     }
     modal = new Modal($modalEl, modalOptions);
@@ -122,10 +128,6 @@ const onUpdated = (response: Response<User>) => {
   toast.value.message = response.message
   toast.value.type = response.succeeded ?
     'success' : 'error'
-  const $modalEl = document.getElementById('edit-user')
-  if ($modalEl) {
-    $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-  }
-  modal.hide()
+  initModal()
 }
 </script>
