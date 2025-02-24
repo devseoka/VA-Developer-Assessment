@@ -75,7 +75,7 @@
 <script setup lang="ts">
 import { reactive, onMounted, nextTick, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import type { Response } from '@/models/response.model';
 import Toaster from '@/components/shared/Toaster.vue';
 import TableHeader from '@/components/table/TableHeader.vue';
@@ -130,7 +130,13 @@ const onUpdate = async () => {
     succeeded.value = result.succeeded
   }
   catch (e) {
-
+    if (e instanceof AxiosError && typeof e.response !== 'undefined') {
+      var err = e.response.data.errors as string[]
+      succeeded.value = false
+      messages.value = err.length > 0 ? err : e.response?.data.errors
+    } else {
+      messages.value = ['An unexpected error whil adding a transaction']
+    }
   }
 }
 

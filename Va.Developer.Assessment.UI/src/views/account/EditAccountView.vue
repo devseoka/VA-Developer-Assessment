@@ -146,7 +146,7 @@ onMounted(() => {
       closable: true,
       placement: 'center',
       backdropClasses:
-        'fixed inset-0 z-40',
+        'bg-gray-900/50 fixed inset-0 z-40',
       onHide() {
         get()
       },
