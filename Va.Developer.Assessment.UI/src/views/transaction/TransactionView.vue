@@ -83,13 +83,17 @@ import type { Transaction } from '@/models/transaction.model';
 import useVuelidate from '@vuelidate/core';
 import { transactionRules } from '@/validators/transaction.validator';
 import AlertError from '@/components/shared/AlertError.vue';
+import type { Account } from '@/models/account.model';
 
 const succeeded = ref<boolean>(false)
 const messages = ref<string[]>([])
 
+
 const route = useRoute();
 const router = useRouter();
 const userId = ref<number>(Number(route.params.id))
+const totalAmount = ref<number>(0)
+
 const toast = ref<{ message: string, type: string }>({
   message: '',
   type: 'success'
@@ -103,6 +107,7 @@ const editForm = reactive<Transaction>({
   processedDate: new Date(),
   id: 0
 })
+
 onMounted(() => {
   get();
 });
@@ -112,6 +117,7 @@ const get = async () => {
     const response = await axios.get<Response<Transaction>>(`https://localhost:7297/api/transactions/${userId.value}`);
     const result = response.data;
     Object.assign(editForm, result.data)
+    Object.assign(totalAmount, result.data.total)
     await nextTick();
   } catch (error) {
     router.push('/users');
