@@ -127,7 +127,6 @@ const onSubmit = async () => {
       var err = (e.response?.data.errors as string[])
       succeeded.value = false;
       messages.value = err.length > 0 ? err : e.response?.data.errors;
-      console.log('Error adding user', JSON.stringify(messages.value));
     }
     onShow()
   }
