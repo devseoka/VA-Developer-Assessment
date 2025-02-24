@@ -27,13 +27,22 @@ namespace Va.Developer.Assessment.Application
                 .ForMember(dst => dst.AccountNumber, opts => opts.MapFrom(src => src.AccountNo))
                 .ForMember(dst => dst.PersonCode, opts => opts.MapFrom(src => src.UserId))
                 .ReverseMap();
+
+            CreateMap<Transaction, TransactionDto>()
+                .ForMember(dst => dst.ProcessedDate, opts => opts.MapFrom(src => src.CaptureDate))
+                .ForMember(dst => dst.OrderedDate, opts => opts.MapFrom(src => src.TransactionDate))
+                .ForMember(dst => dst.AccountId, opts => opts.MapFrom(src => src.AccountCode))
+                .ForMember(dst => dst.Total, opts => opts.MapFrom(src => src.Amount));
             CreateMap<TransactionDto, Transaction>()
                 .IncludeBase<DtoModelBase, DataModelBase>()
                 .ForMember(dst => dst.TransactionDate, opts => opts.MapFrom(src => src.OrderedDate))
-                .ForMember(dst => dst.CaptureDate, opts => opts.MapFrom(src => src.ProcessedDate))
                 .ForMember(dst => dst.AccountCode, opts => opts.MapFrom(src => src.AccountId))
                 .ForMember(dst => dst.Amount, opts => opts.MapFrom(src => src.Total))
-                .ReverseMap();
+                .AfterMap((src, dst) =>
+                {
+                    dst.CaptureDate = DateTime.Now;
+                });
+             
         }
     }
 }

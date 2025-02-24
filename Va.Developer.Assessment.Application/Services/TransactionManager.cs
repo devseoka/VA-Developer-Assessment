@@ -28,7 +28,6 @@ namespace Va.Developer.Assessment.Application.Services
             if (_context.Database.CurrentTransaction != null)
             {
                 await _context.Database.CurrentTransaction.RollbackAsync();
-                await _context.Database.CurrentTransaction.DisposeAsync();
             }
         }
 
@@ -37,7 +36,6 @@ namespace Va.Developer.Assessment.Application.Services
             if (_context.Database.CurrentTransaction != null)
             {
                 await _context.Database.CurrentTransaction.CommitAsync();
-                await _context.Database.CurrentTransaction.DisposeAsync();
             }
         }
     }

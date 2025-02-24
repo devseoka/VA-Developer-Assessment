@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Va.Developer.Assessment.Domain.Contracts;
 
 namespace Va.Developer.Assessment.Domain.Models
 {
-    public class Transaction : DataModelBase
+    public class Transaction : DataModelBase, ITransactionTrail
     {
         [Column("transaction_date")]
         public DateTime TransactionDate { get; set; }

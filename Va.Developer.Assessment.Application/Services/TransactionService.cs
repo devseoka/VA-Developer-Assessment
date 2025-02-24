@@ -29,7 +29,6 @@ namespace Va.Developer.Assessment.Application.Services
 
                 account.Balance += transaction.Total;
                 await _accountService.Update(account);
-                
                 entity = await _transactionRepository.Add(entity);
                 string transactionType = transaction.Total < 0 ?
                     "debit" : "credit";

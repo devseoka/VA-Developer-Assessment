@@ -14,7 +14,7 @@ const notZero = (value: number) => value !== 0;
 const isNumeric = (value: number) => !isNaN(value);
 
 export const transactionRules = {
-  accountNo: {
+  accountId: {
     required,
   },
   orderedDate: {
