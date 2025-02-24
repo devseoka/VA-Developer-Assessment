@@ -1,5 +1,4 @@
 <template>
-  <TableFooter :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
   <Toaster v-if="modalType" :type="modalType" :message="message" :duration="5000" />
   <TableHeader v-if="editForm.accountNo" :subtitle="`Balance: ${balance}`" :title="`Account: ${editForm.accountNo}`" />
   <AlertError :succeeded="false" :messages="messages" />
@@ -75,6 +74,7 @@
           </tr>
         </tbody>
       </table>
+      <Pagination v-if="editForm.transactions.length > 0" :total="editForm.transactions.length" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
     </div>
     <Add :modal="modal!" :account-id="editForm.id" @transaction-added="onTransactionAdd" />
   </div>
@@ -82,12 +82,13 @@
 
 <script setup lang="ts">
 import type { Response } from '@/models/response.model'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Account } from '@/models/account.model'
 
 import TableHeader from '@/components/table/TableHeader.vue'
+import Pagination from '@/components/table/Pagination.vue'
 import Toaster from '@/components/shared/Toaster.vue'
 import AlertError from '@/components/shared/AlertError.vue'
 import Add from '@/components/modals/transactions/Add.vue'
@@ -152,8 +153,6 @@ onMounted(() => {
     })
   }
 })
-
-const total = computed(() => editForm.transactions.length);
 
 const get = async () => {
   try {

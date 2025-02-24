@@ -75,7 +75,7 @@
       </tbody>
     </table>
   </div>
-  <TableFooter :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
+  <Pagination :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
   <Toaster v-if="toastType" :type="toastType" :message="message" />
 </template>
 <script setup lang="ts">
@@ -84,7 +84,7 @@ import Fuse from "fuse.js";
 import { Dropdown, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import Add from '@/components/modals/users/Add.vue';
 import axios from 'axios';
-import TableFooter from '@/components/table/TableFooter.vue';
+import Pagination from '@/components/table/Pagination.vue';
 import TableHeader from '@/components/table/TableHeader.vue';
 import Toaster from '@/components/shared/Toaster.vue';
 import type { User } from '@/models/user.model';

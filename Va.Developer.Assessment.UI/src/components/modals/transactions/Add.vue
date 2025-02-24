@@ -69,8 +69,8 @@ import type { Response } from '@/models/response.model';
 import { transactionRules } from '@/validators/transaction.validator';
 import useVuelidate from '@vuelidate/core';
 import axios, { AxiosError } from 'axios';
-import { Modal, type ModalInterface } from 'flowbite';
-import { onMounted, reactive, ref, type PropType } from 'vue';
+import { type ModalInterface } from 'flowbite';
+import { reactive, ref, type PropType } from 'vue';
 
 const succeeded = ref<boolean>(false)
 const messages = ref<string[]>([])
