@@ -1,5 +1,5 @@
 <template>
-  <Toaster v-if="message" :message="message" :duration="3000" :type="modalType" />
+  <Toaster v-if="message" :message="message" :duration="5000" :type="modalType" />
   <TableHeader v-if="editForm.accountNo" :subtitle="`Balance: ${balance}`" :title="`Account: ${editForm.accountNo}`" />
   <AlertError :succeeded="false" :messages="messages" />
   <div class="max-w-2xl px-4 py-8 mx-auto lg:py-16">
