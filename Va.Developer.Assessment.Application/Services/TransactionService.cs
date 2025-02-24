@@ -67,5 +67,45 @@ namespace Va.Developer.Assessment.Application.Services
         {
             return await Transactions.FirstOrDefaultAsync(t => t.Id == code);
         }
+
+        public async Task<IResponse> Update(TransactionDto transaction)
+        {
+            await _transactionManager.BeginDatabaseTransactionAsync();
+            try
+            {
+
+                var existing = await GetTransactionById(transaction.Id);
+                if (existing is null)
+                {
+                    string message = "Selected transaction does not exists.";
+                    return new ErrorResponse { Errors = [message], Message = message, Succeeded = false };
+                }
+
+                var account = await _accountService.GetAccountById(transaction.AccountId);
+                if (account is null) {
+                    string message = "You cannot update a transaction for an account that was closed or deleted";
+                    return new ErrorResponse { Errors = [message], Message = "Selected account does not exist", Succeeded = false };
+                }
+                account.Balance += Math.Abs(existing.Total) - Math.Abs(account.Balance);
+
+                var entity = _mapper.Map<Transaction>(transaction);
+                entity = await _transactionRepository.Update(entity);
+              
+                await _accountService.Update(account);
+                await _transactionManager.CommitTransactionAsync();
+                return new Response<TransactionDto>
+                {
+                    Data = _mapper.Map<TransactionDto>(entity),
+                    Succeeded = existing.Total != entity.Amount,
+                    Message = "You have successfully updated your balance"
+                };
+            }
+            catch(Exception ex)
+            {
+                await _transactionManager.RollbackTransactionAsync();
+                _logger.LogError(ex, "An unexpected error occured while updating a transaction. Error: {Message}", ex.Message);
+                throw;
+            }
+        }
     }
 }

@@ -35,5 +35,21 @@ namespace Va.Developer.Assessment.Api.Endpoints
                 Succeeded = transaction is not null
             });
         }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute]int code,[FromBody]TransactionDto transaction)
+        {
+            var result = await _validator.ValidateAsync(transaction);
+            if (!result.IsValid)
+            {
+                var errors = result.Errors.Select(e => e.ErrorMessage);
+                var message =  "A validation error occured while updating transaction";
+                return Conflict(new ErrorResponse { Errors = errors, Message = message, Succeeded = false});
+            }
+            var response = await _transactionService.Update(transaction);
+            if (!response.Succeeded) {
+                return BadRequest(response);
+            }
+            return Ok(response);
+        }
     }
 }

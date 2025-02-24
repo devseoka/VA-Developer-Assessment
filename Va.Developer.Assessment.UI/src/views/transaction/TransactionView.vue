@@ -90,7 +90,7 @@ const messages = ref<string[]>([])
 
 const route = useRoute();
 const router = useRouter();
-const userId = ref<number>(Number(route.params.id))
+const transactionId = ref<number>(Number(route.params.id))
 
 const toast = ref<{ message: string, type: string }>({
   message: '',
@@ -112,7 +112,7 @@ onMounted(() => {
 
 const get = async () => {
   try {
-    const response = await axios.get<Response<Transaction>>(`https://localhost:7297/api/transactions/${userId.value}`);
+    const response = await axios.get<Response<Transaction>>(`https://localhost:7297/api/transactions/${transactionId.value}`);
     const result = response.data;
     Object.assign(editForm, result.data)
     await nextTick();
@@ -124,7 +124,7 @@ const get = async () => {
 const transaction$ = useVuelidate(transactionRules, editForm)
 const onUpdate = async () => {
   try {
-    const response = await axios.put<Response<Transaction>>(`https://localhost:7297/api/transactions/`, editForm);
+    const response = await axios.put<Response<Transaction>>(`https://localhost:7297/api/transactions/${editForm.id}`, editForm);
     const result = response.data;
     Object.assign(editForm, result.data)
     toast.value.message = result.message
