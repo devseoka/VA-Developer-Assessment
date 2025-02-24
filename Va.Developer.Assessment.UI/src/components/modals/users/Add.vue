@@ -8,7 +8,7 @@
           <h3 class="text-lg font-semibold text-assessment-primary-500">
             Create New User
           </h3>
-          <button type="button" @click.prevent="onHide"
+          <button type="button" id="close-modal"
             class="text-assessment-primary-500 bg-transparent hover:bg-assessment-primary-300 hover:text-assessment-primary-700 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-cente"
             data-modal-toggle="add-user">
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -90,9 +90,11 @@ import axios, { AxiosError } from 'axios';
 import { type ModalInterface } from 'flowbite';
 
 const props = defineProps({
-  modal: Object as PropType<ModalInterface>,
+  modal: {
+    type: Object as PropType<ModalInterface>,
+    required: true,
+  },
 });
-
 const initForm = () => {
   return reactive<User>({
     firstName: '',
@@ -118,7 +120,6 @@ const onSubmit = async () => {
     messages.value = [response.message]
     succeeded.value = response.succeeded;
     initForm()
-    onHide()
     onUserAdded('user-added-event', response);
 
   }

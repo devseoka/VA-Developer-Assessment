@@ -1,6 +1,6 @@
 <template>
-  <div class=""></div>
-  <Add @user-added-event="onAdd" :modal="modal" />
+
+  <Add @user-added-event="onAdd" :modal="modal!" />
   <TableHeader :title="'Assessment Users'" :subtitle="'Manage or add new users to the assessement application'" />
   <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
     <div class="w-full md:w-1/2">
@@ -23,7 +23,7 @@
     </div>
     <div
       class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-      <button type="button" data-modal-target="add-user" data-modal-toggle="add-user" @click="onShow"
+      <button type="button" data-modal-target="add-user" data-modal-toggle="add-user"
         class="flex items-center justify-center text-white bg-assessment-secondary-500 hover:bg-assessment-secondary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 focus:outline-none">
         Add new user
       </button>
@@ -62,7 +62,7 @@
               class="hidden z-10 w-44 bg-white rounded divide-y divide-assessment-accent-500 shadow">
               <ul class="py-1 text-sm text-gray-700" :aria-labelledby="'dropdown-button-' + user.id">
                 <li>
-                  <a href="#" class="block py-2 px-4 hover:bg-assessment-accent-100">Edit</a>
+                  <a :href="`/users/${user.id}`" class="block py-2 px-4 hover:bg-assessment-accent-100">Edit</a>
                 </li>
               </ul>
               <div class="py-1">
@@ -79,9 +79,9 @@
   <Toaster v-if="toastType" :type="toastType" :message="message" />
 </template>
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import Fuse from "fuse.js";
-import { Dropdown, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
+import { Dropdown, initModals, Modal, type ModalInterface, type ModalOptions } from 'flowbite';
 import Add from '@/components/modals/users/Add.vue';
 import axios from 'axios';
 import Pagination from '@/components/table/Pagination.vue';
@@ -102,14 +102,8 @@ const searchResults = ref<User[]>([])
 const users = ref<User[]>([])
 const fuse = ref<Fuse<User> | null>(null);
 
-const $modalEl = document.querySelector('#add-user') as HTMLElement;
-const modalOptions: ModalOptions = {
-  placement: 'center-right',
-  backdrop: 'dynamic',
-  closable: false,
-  backdropClasses: 'fixed inset-0 z-40'
-}
-let modal: ModalInterface
+
+const modal = ref<ModalInterface | null>(null);
 
 const initFuse = () => {
   if (users.value && users.value.length > 0) {
@@ -153,15 +147,10 @@ const getUsers = async () => {
   }
 };
 const total = computed(() => users.value.length);
-onMounted(() => {
-  getUsers();
-  if ($modalEl) {
-    modal = new Modal($modalEl, modalOptions);
-  }
-});
+
 const onShow = () => {
-  if ($modalEl) {
-    modal.show()
+  if (modal.value) {
+    modal.value.show()
   }
 }
 
@@ -179,17 +168,20 @@ const filteredUsers = computed(() => {
   return source.slice(start, end);
 });
 const onAdd = async (response: Response<User>) => {
- await getUsers()
-  modal.hide();
   toastType.value = 'success'
   message.value = response.message
+  succeeded.value = true;
+  const $closeBtnEl = document.getElementById('close-modal')
+  if($closeBtnEl){
+     $closeBtnEl.click()
+
+  }
+
 }
-const onDelete = async (user:  User) => {
-  try
-  {
+const onDelete = async (user: User) => {
+  try {
     const response = await axios.delete(`http://localhost:5209/api/persons/${user.id}`);
-    if(response.status === 204)
-    {
+    if (response.status === 204) {
       const index = users.value.findIndex((u) => u.id === user.id);
       users.value.splice(index, 1);
       message.value = `${user.firstName} ${user.lastName} record was deleted successfully`;
@@ -197,13 +189,23 @@ const onDelete = async (user:  User) => {
       toastType.value = 'success';
     }
   }
-  catch(e){
+  catch (e) {
     message.value = `An unexpected error occured while deleting ${user.firstName} ${user.lastName} record.`;
     succeeded.value = false;
     toastType.value = 'error';
   }
 
 }
+onBeforeUnmount(() => {
+  if (modal.value) {
+    modal.value.hide();
+  }
+});
+
+onMounted(() => {
+  getUsers();
+  initModal()
+});
 
 watch(users, initFuse, { immediate: true });
 
@@ -222,4 +224,21 @@ watch(filteredUsers, () => {
     });
   });
 });
+const initModal = () => {
+  initModals()
+  const $modalEl = document.getElementById('add-user')
+  if ($modalEl)
+    modal.value = new Modal($modalEl, {
+      closable: true,
+      placement: 'center',
+      backdrop: 'dynamic',
+      backdropClasses: 'fixed inset-0 z-40',
+      onShow: () => {
+        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+      },
+      onHide: () => {
+        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
+      }
+    })
+}
 </script>
