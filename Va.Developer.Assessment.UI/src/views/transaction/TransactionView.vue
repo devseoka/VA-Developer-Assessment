@@ -131,7 +131,9 @@ const onUpdate = async () => {
     toast.value.type = result.succeeded ?
       'success' : 'error'
     succeeded.value = result.succeeded
-    router.push(`/accounts/${editForm.accountId}`);
+    setTimeout(() => {
+      router.push(`/accounts/${editForm.accountId}`);
+    }, 3000)
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {

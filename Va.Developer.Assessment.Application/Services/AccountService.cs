@@ -70,10 +70,6 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
 
     public async Task<IResponse> Update(AccountDto account)
     {
-        if(account.Balance < 1){
-            var message = "Cannot process transaction where amount is less than zero.";
-            return new ErrorResponse { Errors = [message], Message = message };
-        }
         var entity = await _accountRepository.Update(_mapper.Map<Account>(account));
         account = _mapper.Map<AccountDto>(entity);
         return new Response<AccountDto> { Data = account, Message = "Account was successfully updated", Succeeded = true};

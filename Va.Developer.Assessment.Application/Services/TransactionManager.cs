@@ -8,7 +8,6 @@ namespace Va.Developer.Assessment.Application.Services
     public class TransactionManager(VaDeveloperContext context) : ITransactionManager
     {
         private readonly VaDeveloperContext _context = context;
-        private IDbTransaction _transaction;
 
         public VaDeveloperContext WorflowContext => _context;
 
@@ -17,7 +16,7 @@ namespace Va.Developer.Assessment.Application.Services
             if (_context.Database.CurrentTransaction == null)
             {
                 var dbTransaction = await _context.Database.BeginTransactionAsync();
-                _transaction = dbTransaction.GetDbTransaction();
+                var _transaction = dbTransaction.GetDbTransaction();
                 return _transaction;
             }
             return _context.Database.CurrentTransaction.GetDbTransaction();

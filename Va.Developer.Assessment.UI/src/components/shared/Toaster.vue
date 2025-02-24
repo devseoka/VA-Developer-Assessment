@@ -1,6 +1,6 @@
 <template>
   <div :id="`${type}-toaster`" v-if="visible" :class="[
-    ' fixed top-5 left-5 divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white',
+    ' fixed top-5 right-5 divide-x rtl:divide-x-reverse divide-gray-200 rounded-lg shadow-sm flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white',
     toastTypeClass
   ]" role="alert">
     <div :class="iconContainerClass">
