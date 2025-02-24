@@ -105,7 +105,7 @@ const initForm = () => {
 const succeeded = ref<boolean>(false)
 const form = initForm();
 const messages = ref<string[]>([])
-const onUserAdded = defineEmits<{ (e: 'user-added-event', user: User): void }>()
+const onUserAdded = defineEmits<{ (e: 'user-added-event', response: Response<User>): void }>()
 const endoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
 const onSubmit = async () => {
@@ -119,7 +119,7 @@ const onSubmit = async () => {
     succeeded.value = response.succeeded;
     initForm()
     onHide()
-    onUserAdded('user-added-event', response.data);
+    onUserAdded('user-added-event', response);
 
   }
   catch (e) {

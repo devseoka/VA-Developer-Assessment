@@ -151,8 +151,7 @@ onMounted(() => {
       closable: true,
       placement: 'center',
       backdrop: 'dynamic',
-      backdropClasses:
-        'bg-gray-900/50 fixed inset-0 z-40',
+      backdropClasses:'fixed inset-0 z-40',
       onShow: () => {
         $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
       },
