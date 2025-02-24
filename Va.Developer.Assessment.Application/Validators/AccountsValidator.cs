@@ -9,7 +9,7 @@ public class AccountsValidator : AbstractValidator<AccountDto>
             .WithMessage("Account number is required");
         RuleFor(a => a.Balance)
             .NotEmpty()
-            .WithMessage("Remaing balance is required");
+            .WithMessage("Account balance is required");
         RuleFor(a => a.UserId)
             .NotEmpty()
             .WithMessage("Account number should belong to a user");

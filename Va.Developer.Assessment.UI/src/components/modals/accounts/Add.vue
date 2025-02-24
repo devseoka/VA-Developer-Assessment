@@ -22,9 +22,9 @@
             <div class="col-span-2">
               <label for="accountNo" class="block mb-2 text-sm font-medium text-assessment-secondary-900">Account
                 Number</label>
-              <input type="string" id="accountNo" @input="account$.accountNo.$touch()"
+              <input type="text" id="accountNo" v-model="accountForm.accountNo" @blur="account$.accountNo.$touch()"
                 class="bg-assessment-secondary-50 border border-assessment-secondary-300 text-assessment-secondary-900 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full p-2.5"
-                placeholder="Account number" v-model="accountForm.accountNo" />
+                placeholder="Account number" />
               <template v-if="account$.accountNo.$error">
                 <span v-for="(error, i) in account$.accountNo.$errors" :key="i"
                   class="block text-sm text-assessment-primary-500 font-medium">
@@ -62,9 +62,6 @@ const initAccountForm = () => {
     transactions: []
   })
 }
-onMounted(() => {
-  accountForm = initAccountForm()
-})
 
 
 const props = defineProps({
@@ -75,19 +72,25 @@ const props = defineProps({
 })
 const onAccountAdded = defineEmits<{ (e: 'account-added-event', response: Response<Account>): void }>()
 
-let accountForm = initAccountForm()
+const accountForm = reactive<Account>({
+  accountNo: '',
+  balance: 1,
+  userId: props.userId,
+  id: 0,
+  transactions: []
+})
 const account$ = useVuelidate(rules, accountForm)
+
 const onAddAccount = async () => {
   account$.value.$touch()
   if (account$.value.$invalid) {
     return
   }
   try {
-    var response = (await axios.post<Response<Account>>('https://localhost:7297/api/persons', accountForm))
+    var response = (await axios.post<Response<Account>>('https://localhost:7297/api/accounts', accountForm))
     var result = response.data
     messages.value = [result.message]
     succeeded.value = result.succeeded;
-    accountForm = initAccountForm()
     onAccountAdded('account-added-event', result)
   }
   catch (e) {

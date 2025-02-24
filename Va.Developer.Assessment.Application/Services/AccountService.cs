@@ -35,7 +35,7 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
             var message = "Account number already exists.";
             return new ErrorResponse { Errors = [message], Message = message };
         }
-
+        account.Balance = 0;
         var entity = await _accountRepository.Add(_mapper.Map<Account>(account));
         account = _mapper.Map<AccountDto>(entity);
 

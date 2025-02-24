@@ -142,11 +142,11 @@ const onUpdated = (response: Response<User>) => {
 const onAddedAccount = (response: Response<Account>) => {
   const $accountEl = document.getElementById('add-account')
   if ($accountEl) {
-
     editForm.accounts.push(response.data)
     toast.value.message = response.message
     toast.value.type = response.succeeded ?
       'success' : 'error'
+    $accountEl.click()
   }
 }
 </script>
