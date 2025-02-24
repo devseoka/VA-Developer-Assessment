@@ -4,13 +4,19 @@ using Va.Developer.Assessment.Domain.Models;
 
 namespace Va.Developer.Assessment.Application.Services
 {
-    public class TransactionService(IAccountService accountService,ITransactionManager transactionManager, ITransactionRepository transactionRepository, IMapper mapper, ILogger<TransactionService> logger) : ITransactionService
+    public class TransactionService(IAccountService accountService, ITransactionManager transactionManager, ITransactionRepository transactionRepository, IMapper mapper, ILogger<TransactionService> logger) : ITransactionService
     {
         private readonly IAccountService _accountService = accountService;
         private readonly ITransactionRepository _transactionRepository = transactionRepository;
         private readonly ITransactionManager  _transactionManager = transactionManager;
         private readonly IMapper _mapper = mapper;
         private readonly ILogger<TransactionService> _logger = logger;
+
+        public IQueryable<TransactionDto> Transactions =>
+            _transactionRepository
+            .Transactions
+            .ProjectTo<TransactionDto>(_mapper.ConfigurationProvider);
+
         public async Task<IResponse> Add(TransactionDto transaction)
         {
             await _transactionManager.BeginDatabaseTransactionAsync();
@@ -46,7 +52,7 @@ namespace Va.Developer.Assessment.Application.Services
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occured while adding a transaction to {AccountCode}", transaction.AccountId);
+                _logger.LogError(ex, "An unexpected error occured while adding a transaction to {AccountCode}. Error: {Message}", transaction.AccountId, ex.Message);
                 await _transactionManager.RollbackTransactionAsync();
                 throw;
             }
@@ -55,6 +61,11 @@ namespace Va.Developer.Assessment.Application.Services
         public Task<IResponse> Delete(TransactionDto transaction)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<TransactionDto> GetTransactionById(int code)
+        {
+            return await Transactions.FirstOrDefaultAsync(t => t.Id == code);
         }
     }
 }

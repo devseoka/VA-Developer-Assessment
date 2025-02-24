@@ -20,5 +20,20 @@ namespace Va.Developer.Assessment.Api.Endpoints
             }
             return Ok(response);
         }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get([FromRoute]int id)
+        {
+            var transaction = await _transactionService.GetTransactionById(code: id);
+            if(transaction == null)
+            {
+                var message = "Selected transaction does not exist.";
+                return BadRequest(new ErrorResponse { Errors = [message], Message = message, Succeeded = false });
+            }
+            return Ok(new Response<TransactionDto>
+            {
+                Data = transaction,
+                Succeeded = transaction is not null
+            });
+        }
     }
 }

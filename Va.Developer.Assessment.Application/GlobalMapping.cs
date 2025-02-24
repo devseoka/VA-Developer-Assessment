@@ -34,6 +34,7 @@ namespace Va.Developer.Assessment.Application
                 
 
             CreateMap<Transaction, TransactionDto>()
+                .IncludeBase<DataModelBase, DtoModelBase>()
                 .ForMember(dst => dst.ProcessedDate, opts => opts.MapFrom(src => src.CaptureDate))
                 .ForMember(dst => dst.OrderedDate, opts => opts.MapFrom(src => src.TransactionDate))
                 .ForMember(dst => dst.AccountId, opts => opts.MapFrom(src => src.AccountCode))
