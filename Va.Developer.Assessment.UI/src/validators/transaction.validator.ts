@@ -18,15 +18,15 @@ export const transactionRules = {
     required,
   },
   orderedDate: {
-    required,
-    notFutureDate: helpers.withMessage('Date cannot be in the future', notFutureDate),
+    required: helpers.withMessage('Transaction date is required', required),
+    notFutureDate: helpers.withMessage('Transaction date cannot be in the future', notFutureDate),
   },
   total: {
-    required,
-    notZero: helpers.withMessage('Total cannot be zero', notZero),
+    required: helpers.withMessage('Transaction amount cannot be zero', notZero),
+    notZero: helpers.withMessage('Transaction amount cannot be zero', notZero),
     isNumeric: helpers.withMessage('Transaction amount must be a numeric', isNumeric),
   },
   description: {
-    required,
+    required: helpers.withMessage('Transaction description is required', notZero),
   },
 };

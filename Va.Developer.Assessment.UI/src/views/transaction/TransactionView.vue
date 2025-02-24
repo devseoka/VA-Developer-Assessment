@@ -9,11 +9,12 @@
       <div class="max-w-2xl px-4 py-8 mx-auto lg:py-16">
         <h2 class="mb-4 text-xl font-bold text-assessment-secondary-900">Update product</h2>
         <form @submit.prevent="onUpdate">
+          <AlertError :messages="messages" :succeeded="false" />
           <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
             <div class="w-full">
               <label for="dateCaptured" class="block mb-2 text-sm font-medium text-assessment-secondary-900">Date
                 Captured</label>
-              <input type="text" id="dateCaptured" aria-label="dateCaptured" v-model="editForm.orderedDate"
+              <input type="datetime-local" id="dateCaptured" aria-label="dateCaptured" v-model="editForm.processedDate"
                 class="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full p-2.5 cursor-not-allowed"
                 disabled readonly>
             </div>
@@ -81,6 +82,10 @@ import TableHeader from '@/components/table/TableHeader.vue';
 import type { Transaction } from '@/models/transaction.model';
 import useVuelidate from '@vuelidate/core';
 import { transactionRules } from '@/validators/transaction.validator';
+import AlertError from '@/components/shared/AlertError.vue';
+
+const succeeded = ref<boolean>(false)
+const messages = ref<string[]>([])
 
 const route = useRoute();
 const router = useRouter();
@@ -106,7 +111,7 @@ const get = async () => {
   try {
     const response = await axios.get<Response<Transaction>>(`https://localhost:7297/api/transactions/${userId.value}`);
     const result = response.data;
-    Object.assign(editForm, { ...editForm, ...result.data })
+    Object.assign(editForm, result.data)
     await nextTick();
   } catch (error) {
     router.push('/users');
@@ -118,9 +123,11 @@ const onUpdate = async () => {
   try {
     const response = await axios.put<Response<Transaction>>(`https://localhost:7297/api/transactions/`, editForm);
     const result = response.data;
+    Object.assign(editForm, result.data)
     toast.value.message = result.message
     toast.value.type = result.succeeded ?
       'success' : 'error'
+    succeeded.value = result.succeeded
   }
   catch (e) {
 

@@ -89,6 +89,7 @@ import TableHeader from '@/components/table/TableHeader.vue';
 import Toaster from '@/components/shared/Toaster.vue';
 import type { User } from '@/models/user.model';
 import type { Response } from '@/models/response.model';
+import router from '@/router';
 
 
 const query = ref<string>('');
@@ -144,6 +145,7 @@ const getUsers = async () => {
     });
   }
   catch (e) {
+    router.push('/')
   }
 };
 const total = computed(() => users.value.length);
