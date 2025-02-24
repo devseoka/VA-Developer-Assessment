@@ -134,7 +134,6 @@ onMounted(() => {
        'bg-gray-900/50 fixed inset-0 z-40',
        onHide() {
           get()
-          $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
        },
     })
   }

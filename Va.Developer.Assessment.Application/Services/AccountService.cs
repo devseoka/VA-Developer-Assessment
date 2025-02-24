@@ -12,7 +12,7 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
     public IQueryable<AccountDto> Accounts =>
             _accountRepository
                 .Accounts
-                .Include(a => a.Transactions)
+                .Include(a => a.Transactions.OrderByDescending(t => t.CaptureDate))
                 .ProjectTo<AccountDto>(_mapper.ConfigurationProvider);
 
     public async Task<IResponse> Add(AccountDto account)

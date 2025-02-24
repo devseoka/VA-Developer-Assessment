@@ -100,18 +100,14 @@ const transactionForm = reactive<Transaction>({
 
 const transaction$ = useVuelidate(transactionRules, transactionForm)
 
-onMounted(() => {
-  const $modalEl = document.getElementById('add-transaction')
-  if ($modalEl) {
-  }
-})
-
 const onAddTransaction = async () => {
   transaction$.value.$touch()
   if (transaction$.value.$invalid) {
     return
   }
-  if (props.modal && typeof props.modal != 'undefined') {
+  const $modalEl = document.getElementById('add-transaction')
+  if (props.modal && typeof props.modal != 'undefined' && $modalEl) {
+
     try {
       transactionForm.accountId = props.accountId
       const uri = `https://localhost:7297/api/Transactions`
@@ -120,7 +116,7 @@ const onAddTransaction = async () => {
       var result = response.data
       succeeded.value = true
       message.value = result.message
-      props.modal.hide();
+      $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
       addTransaction('transaction-added', result);
     } catch (e) {
       if (e instanceof AxiosError && typeof e.response !== 'undefined') {

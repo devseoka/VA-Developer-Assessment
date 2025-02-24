@@ -15,7 +15,7 @@ namespace Va.Developer.Assessment.Infrastructure.Persistence.Interceptors
             }
             IEnumerable<EntityEntry<Transaction>> entries = eventData
                 .Context.ChangeTracker.Entries<Transaction>()
-                .Where(e => e.State != EntityState.Deleted);
+                .Where(e => e.State == EntityState.Modified || e.State == EntityState.Added);
             foreach (EntityEntry<Transaction> entry in entries)
             {
 
