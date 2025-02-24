@@ -130,8 +130,8 @@ const onUpdate = async () => {
     toast.value.message = result.message
     toast.value.type = result.succeeded ?
       'success' : 'error'
-    succeeded.value = result.
-      setTimeout(() => {
+    succeeded.value = result.succeeded
+    setTimeout(() => {
         router.push(`/accounts/${editForm.accountId}`);
       }, 3000);
   }
