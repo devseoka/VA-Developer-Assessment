@@ -22,7 +22,7 @@ export const transactionRules = {
     notFutureDate: helpers.withMessage('Transaction date cannot be in the future', notFutureDate),
   },
   total: {
-    required: helpers.withMessage('Transaction amount cannot be zero', notZero),
+    required: helpers.withMessage('Transaction is required', notZero),
     notZero: helpers.withMessage('Transaction amount cannot be zero', notZero),
     isNumeric: helpers.withMessage('Transaction amount must be a numeric', isNumeric),
   },
