@@ -7,7 +7,10 @@ namespace Va.Developer.Assessment.Infrastructure.Persistence.Repositories
     public class AccountRepository(VaDeveloperContext context) : IAccountRepository
     {
         private readonly VaDeveloperContext _context = context;
-        public IQueryable<Account> Accounts => _context.Accounts;
+        public IQueryable<Account> Accounts => 
+            _context
+            .Accounts
+            .AsTracking();
 
         public async Task<Account> Add(Account account)
         {

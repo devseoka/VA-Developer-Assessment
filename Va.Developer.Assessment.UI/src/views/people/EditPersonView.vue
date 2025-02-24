@@ -119,7 +119,6 @@ const initModal = () => {
       },
       onHide: () => {
         get()
-        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
       }
     }
     modal = new Modal($modalEl, modalOptions);

@@ -93,7 +93,6 @@ const props = defineProps({
   modal: Object as PropType<ModalInterface>,
 });
 
-const { modal } = props
 const initForm = () => {
   return reactive<User>({
     firstName: '',
@@ -110,6 +109,7 @@ const onUserAdded = defineEmits<{ (e: 'user-added-event', user: User): void }>()
 const endoint = 'https://localhost:7297/api/persons';
 const v$ = useVuelidate(rules, form)
 const onSubmit = async () => {
+  v$.value.$touch()
   if (v$.value.$invalid) {
     return;
   }
@@ -117,9 +117,10 @@ const onSubmit = async () => {
     var response = (await axios.post<Response<User>>(endoint, form)).data;
     messages.value = [response.message]
     succeeded.value = response.succeeded;
-    onUserAdded('user-added-event', response.data);
     initForm()
     onHide()
+    onUserAdded('user-added-event', response.data);
+
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== undefined) {
@@ -132,13 +133,13 @@ const onSubmit = async () => {
   }
 }
 const onShow = () => {
-  if (modal) {
-    modal.show()
+  if (props.modal) {
+    props.modal.show()
   }
 }
 const onHide = () => {
-  if (modal) {
-    modal.hide()
+  if (props.modal) {
+    props.modal.hide()
   }
 }
 </script>

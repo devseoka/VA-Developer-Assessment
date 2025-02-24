@@ -1,6 +1,6 @@
 <template>
   <div class=""></div>
-  <Add @user-added-event="add" :modal="modal" />
+  <Add @user-added-event="onAdd" :modal="modal" />
   <TableHeader :title="'Assessment Users'" :subtitle="'Manage or add new users to the assessement application'" />
   <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
     <div class="w-full md:w-1/2">
@@ -107,7 +107,7 @@ const modalOptions: ModalOptions = {
   placement: 'center-right',
   backdrop: 'dynamic',
   closable: false,
-  backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40'
+  backdropClasses: 'fixed inset-0 z-40'
 }
 let modal: ModalInterface
 
@@ -178,9 +178,11 @@ const filteredUsers = computed(() => {
   const source = query.value.trim() !== '' ? searchResults.value : users.value;
   return source.slice(start, end);
 });
-const add = (user: User) => {
-  users.value.push(user);
+const onAdd = async (response: Response<User>) => {
+ await getUsers()
   modal.hide();
+  toastType.value = 'success'
+  message.value = response.message
 }
 const onDelete = async (user:  User) => {
   try

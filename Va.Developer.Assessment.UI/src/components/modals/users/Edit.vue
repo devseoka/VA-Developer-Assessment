@@ -128,10 +128,6 @@ const onSubmit = async () => {
     initForm()
     onHide()
     onUserAdded('user-update-event', result)
-    const $modalEl = document.getElementById('edit-user')
-    if ($modalEl) {
-      $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-    }
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {

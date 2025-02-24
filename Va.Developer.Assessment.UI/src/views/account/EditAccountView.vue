@@ -174,6 +174,9 @@ const onUpdate = () => {
   }
 }
 const onTransactionAdd = (response: Response<Transaction>) => {
+  if(modal.value){
+    modal.value.hide()
+  }
   editForm.transactions.push(response.data)
   message.value = response.message
   modalType.value = response.succeeded ? 'success' : 'error'

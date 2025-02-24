@@ -112,7 +112,6 @@ const onAddTransaction = async () => {
     try {
       transactionForm.accountId = props.accountId
       const uri = `https://localhost:7297/api/Transactions`
-      props.modal.hide();
       var response = await axios.post<Response<Transaction>>(uri, transactionForm)
       var result = response.data
       succeeded.value = true
@@ -127,7 +126,6 @@ const onAddTransaction = async () => {
       } else {
         message.value = 'An unexpected error whil adding a transaction'
       }
-      props.modal.hide();
     }
   }
 }

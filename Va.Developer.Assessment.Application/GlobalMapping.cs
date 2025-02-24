@@ -26,7 +26,12 @@ namespace Va.Developer.Assessment.Application
                 .IncludeBase<DtoModelBase, DataModelBase>()
                 .ForMember(dst => dst.AccountNumber, opts => opts.MapFrom(src => src.AccountNo))
                 .ForMember(dst => dst.PersonCode, opts => opts.MapFrom(src => src.UserId))
-                .ReverseMap();
+                .ForMember(dst => dst.Transactions, opts => opts.Ignore());
+            CreateMap<Account, AccountDto>()
+                .IncludeBase<DataModelBase, DtoModelBase>()
+                .ForMember(dst => dst.AccountNo, opts => opts.MapFrom(src => src.AccountNumber))
+                .ForMember(dst => dst.UserId, opts => opts.MapFrom(src => src.PersonCode));
+                
 
             CreateMap<Transaction, TransactionDto>()
                 .ForMember(dst => dst.ProcessedDate, opts => opts.MapFrom(src => src.CaptureDate))

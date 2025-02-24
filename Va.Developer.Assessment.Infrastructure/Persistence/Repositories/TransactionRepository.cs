@@ -7,7 +7,10 @@ namespace Va.Developer.Assessment.Infrastructure.Persistence.Repositories;
 public class TransactionRepository(VaDeveloperContext context) : ITransactionRepository
 {
     private readonly VaDeveloperContext _context = context;
-    public IQueryable<Transaction> Transactions => _context.Transactions;
+    public IQueryable<Transaction> Transactions => 
+        _context
+        .Transactions
+        .AsTracking();
 
     public async Task<Transaction> Add(Transaction transaction)
     {

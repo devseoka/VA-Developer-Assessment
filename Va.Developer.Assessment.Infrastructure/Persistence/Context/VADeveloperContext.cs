@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Va.Developer.Assessment.Domain.Contracts;
 using Va.Developer.Assessment.Domain.Models;
 using Va.Developer.Assessment.Infrastructure.Extensions;
 
@@ -14,6 +14,25 @@ namespace Va.Developer.Assessment.Infrastructure.Persistence.Context
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ConfigureRelations();
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (EntityEntry entry in ChangeTracker.Entries())
+            {
+                if(entry.Entity is ITransactionTrail entity)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            entity.CaptureDate = DateTime.UtcNow;
+                            break;
+                        case EntityState.Added:
+                            entity.CaptureDate = DateTime.UtcNow;
+                            break;
+                    }
+                }
+            }
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
