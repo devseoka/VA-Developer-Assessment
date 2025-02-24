@@ -130,9 +130,11 @@ onMounted(() => {
        backdrop: 'dynamic',
        closable: true,
        placement: 'center',
+       backdropClasses:
+       'bg-gray-900/50 fixed inset-0 z-40',
        onHide() {
           get()
-          $modalEl.classList.remove('', '', '', '')
+          $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
        },
     })
   }
