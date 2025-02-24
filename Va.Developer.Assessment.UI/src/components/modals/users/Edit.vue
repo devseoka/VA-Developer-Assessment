@@ -91,14 +91,14 @@ import { onMounted } from 'vue';
 
 
 const props = defineProps({
-  modal: Object as PropType<ModalInterface>,
+
   user: {
     type: Object as PropType<User>,
     required: true
   }
 });
 
-let { modal, user } = props
+let { user } = props
 const initForm = () => {
   return reactive<User>(user);
 }
@@ -111,9 +111,7 @@ const v$ = useVuelidate(rules, form)
 
 const onSubmit = async () => {
   v$.value.$touch()
-  onHide()
   if (v$.value.$invalid) {
-    onShow()
     return;
   }
   try {
@@ -126,7 +124,6 @@ const onSubmit = async () => {
     result.data.accounts = user.accounts
     Object.assign(form, result.data)
     initForm()
-    onHide()
     onUserAdded('user-update-event', result)
   }
   catch (e) {
@@ -141,34 +138,8 @@ const onSubmit = async () => {
         messages.value = errors
       }
     }
-    onShow()
   }
 }
 onMounted(() => {
-  const $modalEl = document.getElementById('edit-user')
-  if (!modal && $modalEl) {
-    modal = new Modal($modalEl, {
-      closable: true,
-      placement: 'center',
-      backdrop: 'dynamic',
-      backdropClasses:'fixed inset-0 z-40',
-      onShow: () => {
-        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-      },
-      onHide: () => {
-        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-      }
-    })
-  }
 })
-const onShow = () => {
-  if (modal) {
-    modal.show()
-  }
-}
-const onHide = () => {
-  if (modal) {
-    modal.hide()
-  }
-}
 </script>

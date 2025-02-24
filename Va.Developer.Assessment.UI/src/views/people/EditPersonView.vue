@@ -1,6 +1,6 @@
-<template v-if="editForm">
+<template v-if="editForm && editForm.id">
   <div v-if="editForm">
-    <Edit @user-update-event="onUpdated" :user="editForm" :modal="modal" />
+    <Edit @user-update-event="onUpdated" :user="editForm" />
     <Toaster v-if="toast.message" :duration="3000" :message="toast.message" :type="toast.type" />
     <div class="flex justify-between w-full items-center py-8">
       <div class="flex flex-col">
@@ -55,6 +55,7 @@
       </div>
     </div>
   </div>
+  <Add v-if="editForm.id" :user-id="editForm.id" @account-added-event="onAddedAccount" />
 </template>
 
 <script setup lang="ts">
@@ -68,18 +69,19 @@ import { useCurrency } from '@/extensions/currency.pipe';
 import Edit from '@/components/modals/users/Edit.vue';
 import Toaster from '@/components/shared/Toaster.vue';
 import TableHeader from '@/components/table/TableHeader.vue';
+import Add from '@/components/modals/accounts/Add.vue';
+import type { Account } from '@/models/account.model';
 
 const route = useRoute();
 const router = useRouter();
-const userId = route.params.id;
-let modal: ModalInterface;
+const userId = ref<number>(Number(route.params.id))
 const toast = ref<{ message: string, type: string }>({
   message: '',
   type: 'success'
 })
 
 const editForm = reactive<User>({
-  id: 0,
+  id: Number(route.params.id),
   firstName: '',
   lastName: '',
   idNo: '',
@@ -88,11 +90,12 @@ const editForm = reactive<User>({
 
 onMounted(() => {
   get();
+  initModal()
 });
 
 const get = async () => {
   try {
-    const response = await axios.get<Response<User>>(`https://localhost:7297/api/persons/${userId}`);
+    const response = await axios.get<Response<User>>(`https://localhost:7297/api/persons/${userId.value}`);
     const result = response.data;
     const { firstName, lastName, ...rest } = result.data;
 
@@ -102,7 +105,7 @@ const get = async () => {
       ...rest,
     };
 
-    Object.assign(editForm, user);
+    Object.assign(editForm, { ...editForm, ...user })
     await nextTick();
     initAccordions();
     initModal()
@@ -111,11 +114,6 @@ const get = async () => {
     router.push('/users');
   }
 };
-const onShow = () => {
-  if (modal) {
-    modal.show()
-  }
-}
 const initModal = () => {
   const $modalEl = document.getElementById('edit-user');
   if ($modalEl) {
@@ -132,7 +130,6 @@ const initModal = () => {
         get()
       }
     }
-    modal = new Modal($modalEl, modalOptions);
   }
 }
 const onUpdated = (response: Response<User>) => {
@@ -141,5 +138,15 @@ const onUpdated = (response: Response<User>) => {
   toast.value.type = response.succeeded ?
     'success' : 'error'
   initModal()
+}
+const onAddedAccount = (response: Response<Account>) => {
+  const $accountEl = document.getElementById('add-account')
+  if ($accountEl) {
+
+    editForm.accounts.push(response.data)
+    toast.value.message = response.message
+    toast.value.type = response.succeeded ?
+      'success' : 'error'
+  }
 }
 </script>
