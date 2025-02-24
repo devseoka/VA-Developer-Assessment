@@ -124,7 +124,7 @@ const get = async () => {
 const transaction$ = useVuelidate(transactionRules, editForm)
 const onUpdate = async () => {
   try {
-    const response = await axios.put<Response<Transaction>>(`https://localhost:7297/api/transactions/${editForm.id}`, editForm);
+    const response = await axios.put<Response<Transaction>>(`https://localhost:7297/api/transactions/`, editForm);
     const result = response.data;
     Object.assign(editForm, result.data)
     toast.value.message = result.message

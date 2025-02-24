@@ -35,8 +35,8 @@ namespace Va.Developer.Assessment.Api.Endpoints
                 Succeeded = transaction is not null
             });
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromRoute]int code,[FromBody]TransactionDto transaction)
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody]TransactionDto transaction)
         {
             var result = await _validator.ValidateAsync(transaction);
             if (!result.IsValid)
