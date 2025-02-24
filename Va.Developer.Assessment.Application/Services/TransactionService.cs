@@ -86,7 +86,7 @@ namespace Va.Developer.Assessment.Application.Services
                     string message = "You cannot update a transaction for an account that was closed or deleted";
                     return new ErrorResponse { Errors = [message], Message = "Selected account does not exist", Succeeded = false };
                 }
-                account.Balance += Math.Abs(existing.Total) - Math.Abs(transaction.Total);
+                account.Balance = existing.Total + transaction.Total;
 
                 var entity = _mapper.Map<Transaction>(transaction);
                 entity = await _transactionRepository.Update(entity);
