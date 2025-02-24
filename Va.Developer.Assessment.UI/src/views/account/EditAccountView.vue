@@ -75,7 +75,7 @@
         </tbody>
       </table>
     </div>
-    <Add v-if="modal && editForm.id" :modal="modal" :account-id="editForm.id" />
+    <Add :modal="modal!" :account-id="editForm.id" @transaction-added="onTransactionAdd"/>
   </div>
 </template>
 
@@ -95,6 +95,7 @@ import { useCurrency } from '@/extensions/currency.pipe'
 import useVuelidate from '@vuelidate/core'
 import { rules } from '@/validators/account.validators'
 import { Modal, type ModalInterface } from 'flowbite'
+import type { Transaction } from '@/models/transaction.model'
 
 const route = useRoute()
 const router = useRouter()
@@ -155,5 +156,11 @@ const onUpdate = () => {
   if (v$.value.$invalid) {
     return
   }
+}
+const onTransactionAdd = (response: Response<Transaction>) => {
+  editForm.transactions.push(response.data)
+  message.value = response.message
+  modalType.value = response.succeeded ? 'success' : 'error'
+  succeeded.value = response.succeeded
 }
 </script>

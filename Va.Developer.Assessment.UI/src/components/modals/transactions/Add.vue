@@ -77,16 +77,19 @@ const messages = ref<string[]>([])
 const message = ref<string>('')
 
 const props = defineProps({
-   accountId: {
+  accountId: {
     type: Number,
     required: true
-   },
-   modal: {
+  },
+  modal: {
     type: Object as PropType<ModalInterface>,
-    required: true
-   }
+    required: false
+  }
 })
 
+const addTransaction = defineEmits<{
+  (event: 'transaction-added', response: Response<Transaction>): void;
+}>();
 const transactionForm = reactive<Transaction>({
   accountId: props.accountId,
   description: '',
@@ -108,25 +111,27 @@ const onAddTransaction = async () => {
   if (transaction$.value.$invalid) {
     return
   }
-  try {
-
-    transactionForm.accountId = props.accountId
-    const uri = `https://localhost:7297/api/Transactions`
-    props.modal.hide();
-    var response = await axios.post<Response<Transaction>>(uri, transactionForm)
-    var result = response.data
-    succeeded.value = true
-    message.value = result.message
-    props.modal.hide();
-  } catch (e) {
-    if (e instanceof AxiosError && typeof e.response !== 'undefined') {
-      var err = e.response.data.errors as string[]
-      succeeded.value = false
-      messages.value = err.length > 0 ? err : e.response?.data.errors
-    } else {
-      message.value = 'An unexpected error whil adding a transaction'
+  if (props.modal && typeof props.modal != 'undefined') {
+    try {
+      transactionForm.accountId = props.accountId
+      const uri = `https://localhost:7297/api/Transactions`
+      props.modal.hide();
+      var response = await axios.post<Response<Transaction>>(uri, transactionForm)
+      var result = response.data
+      succeeded.value = true
+      message.value = result.message
+      props.modal.hide();
+      addTransaction('transaction-added', result);
+    } catch (e) {
+      if (e instanceof AxiosError && typeof e.response !== 'undefined') {
+        var err = e.response.data.errors as string[]
+        succeeded.value = false
+        messages.value = err.length > 0 ? err : e.response?.data.errors
+      } else {
+        message.value = 'An unexpected error whil adding a transaction'
+      }
+      props.modal.hide();
     }
-    props.modal.hide();
   }
 }
 
