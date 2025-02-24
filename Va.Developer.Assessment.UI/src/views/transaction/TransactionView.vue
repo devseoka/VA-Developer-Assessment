@@ -25,8 +25,8 @@
               <input type="datetime-local" id="transactionDate" v-model="editForm.orderedDate"
                 @blur="transaction$.orderedDate.$touch()"
                 class="bg-assessment-secondary-50 border border-assessment-secondary-300 text-assessment-secondary-900 text-sm rounded-lg focus:ring-assessment-accent-600 focus:border-assessment-accent-600 block w-full p-2.5">
-              <template v-if="transaction$.total.$error">
-                <span v-for="(error, i) in transaction$.total.$errors" :key="i"
+              <template v-if="transaction$.orderedDate.$error">
+                <span v-for="(error, i) in transaction$.orderedDate.$errors" :key="i"
                   class="block text-sm text-assessment-primary-500 font-medium">
                   {{ error.$message }}
                 </span>
@@ -52,8 +52,8 @@
                 class="block p-2.5 w-full text-sm text-assessment-secondary-900 bg-assessment-secondary-50 rounded-lg border border-assessment-secondary-300 focus:ring-assessment-accent-500 focus:border-assessment-accent-500">
     {{ editForm.description }}
   </textarea>
-              <template v-if="transaction$.total.$error">
-                <span v-for="(error, i) in transaction$.total.$errors" :key="i"
+              <template v-if="transaction$.description.$error">
+                <span v-for="(error, i) in transaction$.description.$errors" :key="i"
                   class="block text-sm text-assessment-primary-500 font-medium">
                   {{ error.$message }}
                 </span>
