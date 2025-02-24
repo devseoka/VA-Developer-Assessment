@@ -95,6 +95,7 @@ const transactionForm = reactive<Transaction>({
   description: '',
   orderedDate: new Date(),
   total: 0,
+  processedDate: new Date(),
   id: 0
 })
 

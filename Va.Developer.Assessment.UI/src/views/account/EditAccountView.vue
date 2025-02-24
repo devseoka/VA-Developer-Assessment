@@ -1,5 +1,6 @@
 <template>
-  <Toaster v-if="message" :message="message" :duration="5000" :type="modalType" />
+  <TableFooter :total="total" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
+  <Toaster v-if="modalType" :type="modalType" :message="message" :duration="5000" />
   <TableHeader v-if="editForm.accountNo" :subtitle="`Balance: ${balance}`" :title="`Account: ${editForm.accountNo}`" />
   <AlertError :succeeded="false" :messages="messages" />
   <div class="max-w-2xl px-4 py-8 mx-auto lg:py-16">
@@ -47,7 +48,7 @@
       </button>
     </div>
     <div class="relative overflow-x-auto flex-col py-4">
-      <table class="w-full text-sm text-left rtl:text-right text-assessment-secondary-500">
+      <table class="w-full text-sm text-left rtl:text-right text-assessment-secondary-500" v-if="transactions().length">
         <thead class="text-xs text-assessment-secondary-700 uppercase bg-assessment-secondary-100">
           <tr>
             <th scope="col" class="px-6 py-3">Description</th>
@@ -57,7 +58,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="bg-white" v-for="transaction in editForm.transactions" :key="transaction.id">
+          <tr class="bg-white" v-for="transaction in transactions()" :key="transaction.id">
             <th scope="row" class="px-6 py-4 font-medium text-assessment-secondary-900 whitespace-nowrap">
               {{ transaction.description }}
             </th>
@@ -75,7 +76,7 @@
         </tbody>
       </table>
     </div>
-    <Add :modal="modal!" :account-id="editForm.id" @transaction-added="onTransactionAdd"/>
+    <Add :modal="modal!" :account-id="editForm.id" @transaction-added="onTransactionAdd" />
   </div>
 </template>
 
@@ -101,9 +102,13 @@ const route = useRoute()
 const router = useRouter()
 
 const succeeded = ref<boolean>(false)
+
 const messages = ref<string[]>([])
 const message = ref<string>('')
 const modalType = ref<string>('')
+
+const itemsPerPage = ref<number>(5)
+const currentPage = ref<number>(1)
 
 
 const editForm = reactive<Account>({
@@ -122,22 +127,33 @@ const balance = computed(() => {
 
 let modal = ref<ModalInterface | null>(null);
 
+const transactions = () => {
+  const orderedTransactions = [...editForm.transactions].sort((a, b) => {
+    return new Date(b.processedDate).getTime() - new Date(a.processedDate).getTime();
+  });
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return orderedTransactions.slice(start, end)
+}
+
 onMounted(() => {
   get()
   const $modalEl = document.getElementById('add-transaction')
-  if($modalEl){
+  if ($modalEl) {
     modal.value = new Modal($modalEl, {
-       backdrop: 'dynamic',
-       closable: true,
-       placement: 'center',
-       backdropClasses:
-       'bg-gray-900/50 fixed inset-0 z-40',
-       onHide() {
-          get()
-       },
+      backdrop: 'dynamic',
+      closable: true,
+      placement: 'center',
+      backdropClasses:
+        'bg-gray-900/50 fixed inset-0 z-40',
+      onHide() {
+        get()
+      },
     })
   }
 })
+
+const total = computed(() => editForm.transactions.length);
 
 const get = async () => {
   try {
