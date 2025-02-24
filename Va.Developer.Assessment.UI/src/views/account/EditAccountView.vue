@@ -75,7 +75,7 @@
         </tbody>
       </table>
     </div>
-
+    <Add v-if="modal && editForm.id" :modal="modal" :account-id="editForm.id" />
   </div>
 </template>
 
@@ -89,11 +89,11 @@ import type { Account } from '@/models/account.model'
 import TableHeader from '@/components/table/TableHeader.vue'
 import Toaster from '@/components/shared/Toaster.vue'
 import AlertError from '@/components/shared/AlertError.vue'
+import Add from '@/components/modals/transactions/Add.vue'
+
 import { useCurrency } from '@/extensions/currency.pipe'
 import useVuelidate from '@vuelidate/core'
 import { rules } from '@/validators/account.validators'
-import { transactionRules } from '@/validators/transaction.validator'
-import type { Transaction } from '@/models/transaction.model'
 import { Modal, type ModalInterface } from 'flowbite'
 
 const route = useRoute()
@@ -112,38 +112,27 @@ const editForm = reactive<Account>({
   userId: 0,
   transactions: [],
 })
-const transactionForm = reactive<Transaction>({
-  accountId: editForm.id,
-  description: '',
-  orderedDate: new Date(),
-  total: 0,
-  id: 0
-})
 
-let modal: ModalInterface
-
-const transaction$ = useVuelidate(transactionRules, transactionForm)
 const v$ = useVuelidate(rules, editForm)
 
 const balance = computed(() => {
   return useCurrency(editForm.balance).formattedPrice.value.toString()
 })
 
+let modal = ref<ModalInterface | null>(null);
+
 onMounted(() => {
   get()
   const $modalEl = document.getElementById('add-transaction')
-  if ($modalEl) {
-    modal = new Modal($modalEl, {
-      closable: true,
-      placement: 'center',
-      backdrop: 'dynamic',
-      backdropClasses: 'bg-gray-900/50 fixed inset-0 z-40',
-      onShow: () => {
-        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
-      },
-      onHide: () => {
-        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
-      },
+  if($modalEl){
+    modal.value = new Modal($modalEl, {
+       backdrop: 'dynamic',
+       closable: true,
+       placement: 'center',
+       onHide() {
+          get()
+          $modalEl.classList.remove('', '', '', '')
+       },
     })
   }
 })
@@ -165,35 +154,6 @@ const onUpdate = () => {
   v$.value.$touch()
   if (v$.value.$invalid) {
     return
-  }
-}
-const onAddTransaction = async () => {
-  transaction$.value.$touch()
-  if (transaction$.value.$invalid) {
-    return
-  }
-  try {
-
-    transactionForm.accountId = editForm.id
-    console.log(`Sending transaction request`, JSON.stringify(transactionForm))
-    const uri = `https://localhost:7297/api/Transactions`
-    var response = await axios.post<Response<Transaction>>(uri, transactionForm)
-    var result = response.data
-    editForm.transactions.push(result.data)
-    succeeded.value = true
-    message.value = result.message
-    modalType.value = 'success'
-    modal.hide()
-  } catch (e) {
-    modalType.value = 'error'
-    if (e instanceof AxiosError && typeof e.response !== 'undefined') {
-      var err = e.response.data.errors as string[]
-      succeeded.value = false
-      messages.value = err.length > 0 ? err : e.response?.data.errors
-    } else {
-
-      message.value = 'An unexpected error whil adding a transaction'
-    }
   }
 }
 </script>
