@@ -9,7 +9,7 @@
         private static readonly Lazy<MsSqlContainer> _lazyLoadContainer =
             new(() => new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
-            .WithPassword("P@ssW0rd1").WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1434))
+            .WithPassword("P@ssW0rd1").WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(1433))
             .WithCleanUp(true)
             .Build());
         private static MsSqlContainer SqlContainer => _lazyLoadContainer.Value;
