@@ -87,15 +87,15 @@ const onAddAccount = async () => {
     return
   }
   try {
-    var response = (await axios.post<Response<Account>>('https://localhost:7297/api/accounts', accountForm))
-    var result = response.data
+    const response = (await axios.post<Response<Account>>('https://localhost:7297/api/accounts', accountForm))
+    const result = response.data
     messages.value = [result.message]
     succeeded.value = result.succeeded;
     onAccountAdded('account-added-event', result)
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {
-      var err = (e.response?.data.errors as string[])
+      const err = (e.response?.data.errors as string[])
       succeeded.value = false;
       if (typeof err !== 'undefined') {
         messages.value = err.length > 0 ? err : e.response?.data.errors

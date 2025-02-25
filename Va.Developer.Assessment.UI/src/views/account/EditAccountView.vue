@@ -1,53 +1,73 @@
 <template>
   <Toaster v-if="modalType" :type="modalType" :message="message" :duration="5000" />
-  <TableHeader v-if="editForm.accountNo" :subtitle="`Balance: ${balance}`" :title="`Account: ${editForm.accountNo}`" />
+  <TableHeader
+    v-if="editForm.accountNo"
+    :subtitle="`Balance: ${balance}`"
+    :title="`Account: ${editForm.accountNo}`"
+  />
   <AlertError :succeeded="false" :messages="messages" />
   <div class="max-w-2xl px-4 py-8 mx-auto lg:py-16">
     <h2 class="mb-4 text-xl font-bold text-assessment-secondary-500">Update Account</h2>
     <form @submit.prevent="">
       <div class="grid gap-4 mb-4 sm:grid-cols-2 sm:gap-6 sm:mb-5">
         <div class="w-full">
-          <label for="accountNo" class="block mb-2 text-sm font-medium text-assessment-secondary-900">Account
-            Number</label>
-          <input type="text" v-model="editForm.accountNo"
+          <label
+            for="accountNo"
+            class="block mb-2 text-sm font-medium text-assessment-secondary-900"
+            >Account Number</label
+          >
+          <input
+            type="text"
+            v-model="editForm.accountNo"
+            @blur="v$.accountNo.$touch()"
             class="bg-assessment-secondary-50 border border-assessment-secondary-300 text-assessment-secondary-900 text-sm rounded-lg focus:ring-assessment-accent-600 focus:border-assessment-accent-600 block w-full p-2.5"
-            placeholder="Product accountNo" />
+            placeholder="account Number"
+          />
         </div>
         <div class="w-full">
-          <label for="price" class="block mb-2 text-sm font-medium text-assessment-secondary-900">Balance</label>
-          <input type="text" id="disabled-input" aria-label="disabled input"
+          <label for="price" class="block mb-2 text-sm font-medium text-assessment-secondary-900"
+            >Balance</label
+          >
+          <input
+            type="text"
+            id="disabled-input"
+            aria-label="disabled input"
             class="mb-5 bg-assessment-secondary-100 border border-assessment-secondary-300 text-assessment-secondary-900 text-sm rounded-lg focus:ring-assessment-accent-500 focus:border-assessment-accent-500 block w-full p-2.5 cursor-not-allowed"
-            v-model="editForm.balance" disabled />
+            v-model="editForm.balance"
+            disabled
+          />
         </div>
       </div>
       <div class="flex items-center space-x-4">
-        <button type="submit"
-          class="text-white bg-assessment-accent-700 hover:bg-assessment-accent-800 focus:ring-4 focus:outline-none focus:ring-assessment-accent-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+        <button
+          type="submit"
+          class="w-full text-white bg-assessment-accent-700 hover:bg-assessment-accent-800 focus:ring-4 focus:outline-none focus:ring-assessment-accent-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+        >
           Update Account
-        </button>
-        <button type="button" :disabled="v$.$invalid"
-          class="text-assessment-assessment-accent-600 inline-flex items-center hover:text-white border border-assessment-assessment-accent-600 hover:bg-assessment-assessment-accent-600 focus:ring-4 focus:outline-none focus:ring-assessment-assessment-accent-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-          <svg class="w-5 h-5 mr-1 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd"
-              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-              clip-rule="evenodd"></path>
-          </svg>
-          Delete
         </button>
       </div>
     </form>
   </div>
   <div class="border-y-2 border-assessment-secondary-400 flex flex-col">
     <div class="flex w-full justify-between items-center">
-      <TableHeader :subtitle="'Manage all transaction related to this account number.'"
-        :title="`${editForm.accountNo} Transactions`" />
-      <button type="button" data-modal-target="add-transaction" data-modal-toggle="add-transaction"
-        class="py-3 px-2 bg-assessment-accent-500 rounded-lg text-assessment-accent-50 cursor-pointer hover:bg-assessment-accent-600 focus:ring-4 focus:ring-assessment-accent-300 focus:bg-assessment-accent-700 font-semibold text-sm mx-3 focus:outline-none">
+      <TableHeader
+        :subtitle="'Manage all transaction related to this account number.'"
+        :title="`${editForm.accountNo} Transactions`"
+      />
+      <button
+        type="button"
+        data-modal-target="add-transaction"
+        data-modal-toggle="add-transaction"
+        class="py-3 px-2 bg-assessment-accent-500 rounded-lg text-assessment-accent-50 cursor-pointer hover:bg-assessment-accent-600 focus:ring-4 focus:ring-assessment-accent-300 focus:bg-assessment-accent-700 font-semibold text-sm mx-3 focus:outline-none"
+      >
         Add Transaction
       </button>
     </div>
     <div class="relative overflow-x-auto flex-col py-4">
-      <table class="w-full text-sm text-left rtl:text-right text-assessment-secondary-500" v-if="transactions().length">
+      <table
+        class="w-full text-sm text-left rtl:text-right text-assessment-secondary-500"
+        v-if="transactions().length"
+      >
         <thead class="text-xs text-assessment-secondary-700 uppercase bg-assessment-secondary-100">
           <tr>
             <th scope="col" class="px-6 py-3">Description</th>
@@ -58,7 +78,10 @@
         </thead>
         <tbody>
           <tr class="bg-white" v-for="transaction in transactions()" :key="transaction.id">
-            <th scope="row" class="px-6 py-4 font-medium text-assessment-secondary-900 whitespace-nowrap">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-assessment-secondary-900 whitespace-nowrap"
+            >
               {{ transaction.description }}
             </th>
             <td class="px-6 py-4">
@@ -68,15 +91,23 @@
               {{ useCurrency(transaction.total).formattedPrice }}
             </td>
             <td class="px-6 py-4">
-              <a :href="`/transactions/${transaction.id}`"
-                class="font-medium text-assessment-accent-600 hover:underline">Edit</a>
+              <a
+                :href="`/transactions/${transaction.id}`"
+                class="font-medium text-assessment-accent-600 hover:underline"
+                >Edit</a
+              >
             </td>
           </tr>
         </tbody>
       </table>
-      <Pagination v-if="editForm.transactions.length > 0" :total="editForm.transactions.length" :itemsPerPage="itemsPerPage" v-model:currentPage="currentPage" />
+      <Pagination
+        v-if="editForm.transactions.length > 0"
+        :total="editForm.transactions.length"
+        :itemsPerPage="itemsPerPage"
+        v-model:currentPage="currentPage"
+      />
     </div>
-    <Add :modal="modal!" :account-id="editForm.id" @transaction-added="onTransactionAdd" />
+    <Add :account-id="editForm.id" @transaction-added="onTransactionAdd" />
   </div>
 </template>
 
@@ -111,7 +142,6 @@ const modalType = ref<string>('')
 const itemsPerPage = ref<number>(5)
 const currentPage = ref<number>(1)
 
-
 const editForm = reactive<Account>({
   id: 0,
   accountNo: '',
@@ -126,32 +156,17 @@ const balance = computed(() => {
   return useCurrency(editForm.balance).formattedPrice.value.toString()
 })
 
-let modal = ref<ModalInterface | null>(null);
-
 const transactions = () => {
   const orderedTransactions = [...editForm.transactions].sort((a, b) => {
-    return new Date(b.processedDate).getTime() - new Date(a.processedDate).getTime();
-  });
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
+    return new Date(b.processedDate).getTime() - new Date(a.processedDate).getTime()
+  })
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
   return orderedTransactions.slice(start, end)
 }
 
 onMounted(() => {
   get()
-  const $modalEl = document.getElementById('add-transaction')
-  if ($modalEl) {
-    modal.value = new Modal($modalEl, {
-      backdrop: 'dynamic',
-      closable: true,
-      placement: 'center',
-      backdropClasses:
-        'bg-gray-900/50 fixed inset-0 z-40',
-      onHide() {
-        get()
-      },
-    })
-  }
 })
 
 const get = async () => {
@@ -174,12 +189,12 @@ const onUpdate = () => {
   }
 }
 const onTransactionAdd = (response: Response<Transaction>) => {
-  if(modal.value){
-    modal.value.hide()
+  const $modalEl = document.getElementById('add-transaction')
+  if ($modalEl) {
+    editForm.transactions.push(response.data)
+    message.value = response.message
+    modalType.value = response.succeeded ? 'success' : 'error'
+    succeeded.value = response.succeeded
   }
-  editForm.transactions.push(response.data)
-  message.value = response.message
-  modalType.value = response.succeeded ? 'success' : 'error'
-  succeeded.value = response.succeeded
 }
 </script>

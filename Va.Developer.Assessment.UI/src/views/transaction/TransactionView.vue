@@ -49,9 +49,7 @@
                 class="block mb-2 text-sm font-medium text-assessment-secondary-900">Description</label>
               <textarea id="description" rows="" v-model="editForm.description"
                 @blur="transaction$.description.$touch()"
-                class="block p-2.5 w-full text-sm text-assessment-secondary-900 bg-assessment-secondary-50 rounded-lg border border-assessment-secondary-300 focus:ring-assessment-accent-500 focus:border-assessment-accent-500">
-    {{ editForm.description }}
-  </textarea>
+                class="block p-2.5 w-full text-sm text-assessment-secondary-900 bg-assessment-secondary-50 rounded-lg border border-assessment-secondary-300 focus:ring-assessment-accent-500 focus:border-assessment-accent-500"> </textarea>
               <template v-if="transaction$.description.$error">
                 <span v-for="(error, i) in transaction$.description.$errors" :key="i"
                   class="block text-sm text-assessment-primary-500 font-medium">
@@ -137,7 +135,7 @@ const onUpdate = async () => {
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== 'undefined') {
-      var err = e.response.data.errors as string[]
+      const err = e.response.data.errors as string[]
       succeeded.value = false
       messages.value = err.length > 0 ? err : e.response?.data.errors
     } else {

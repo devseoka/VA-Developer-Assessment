@@ -81,10 +81,6 @@ const props = defineProps({
     type: Number,
     required: true
   },
-  modal: {
-    type: Object as PropType<ModalInterface>,
-    required: false
-  }
 })
 
 const addTransaction = defineEmits<{
@@ -107,20 +103,18 @@ const onAddTransaction = async () => {
     return
   }
   const $modalEl = document.getElementById('add-transaction')
-  if (props.modal && typeof props.modal != 'undefined' && $modalEl) {
-
+  if (props.accountId.toString().trim() !== '') {
     try {
       transactionForm.accountId = props.accountId
       const uri = `https://localhost:7297/api/Transactions`
-      var response = await axios.post<Response<Transaction>>(uri, transactionForm)
-      var result = response.data
+      const response = await axios.post<Response<Transaction>>(uri, transactionForm)
+      const result = response.data
       succeeded.value = true
       message.value = result.message
-      $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40')
       addTransaction('transaction-added', result);
     } catch (e) {
       if (e instanceof AxiosError && typeof e.response !== 'undefined') {
-        var err = e.response.data.errors as string[]
+        const err = Array.isArray(e.response.data.errors) ?e.response.data.errors : []
         succeeded.value = false
         messages.value = err.length > 0 ? err : e.response?.data.errors
       } else {
