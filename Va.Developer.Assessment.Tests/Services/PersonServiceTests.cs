@@ -44,13 +44,33 @@ namespace Va.Developer.Assessment.Tests.Services
             Assert.False(response.Succeeded);
             Assert.Equal($"Id number already exists", response.Message);
         }
-        [Fact(DisplayName = "Get People By Id Returns Success Response")]
-        public async Task Update_Returns_SuccessdResponse()
+        [Fact(DisplayName = "Update Person  Returns Success Response")]
+        public async Task UpdatePerson_Returns_SuccesssResponse()
         {
             var person = new PersonDto { LastName = "Agents", FirstName = "Virtual", IdNo = "44XX0801450XX" };
-            var response = (await _personService.Add(person)) as ErrorResponse;
-            Assert.False(response.Succeeded);
-            Assert.Equal($"Id number already exists", response.Message);
+            var response = (await _personService.Add(person)) as Response<PersonDto>;
+
+            Assert.True(response.Succeeded);
+            Assert.True(response.Data.Id > 50);
+
+            person.LastName = "The Virtual Agents";
+            person = await _personService.Update(person) ;
+
+            Assert.Equal("The Virtual Agents", person.LastName);
+        }
+        [Fact(DisplayName = "Delete Person  Returns Success Response")]
+        public async Task Delete_Returns_SuccesssResponse()
+        {
+            var person = new PersonDto { LastName = $"Agents {DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}", FirstName = "Virtual", IdNo = "44XX0801450XX" };
+            var response = (await _personService.Add(person)) as Response<PersonDto>;
+
+            Assert.True(response.Succeeded);
+            Assert.True(response.Data.Id > 50);
+
+            await _personService.Delete(person) ;
+
+            person = await _personService.GetPersonById(person.Id);
+            Assert.Null(person);
         }
     }
 }

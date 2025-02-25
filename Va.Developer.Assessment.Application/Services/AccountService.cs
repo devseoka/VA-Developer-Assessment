@@ -13,6 +13,7 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
             _accountRepository
                 .Accounts
                 .Include(a => a.Transactions.OrderByDescending(t => t.CaptureDate))
+                .AsNoTracking()
                 .ProjectTo<AccountDto>(_mapper.ConfigurationProvider);
 
     public async Task<IResponse> Add(AccountDto account)
@@ -44,13 +45,25 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
 
     public async Task<IResponse> Delete(AccountDto account)
     {
-        if (account.Balance < 1)
+       
+        if (account.Balance != 0)
         {
             var message = "Account cannot be deleted or closed if balance is not zero";
             return new ErrorResponse { Errors = [message], Message = message };
         }
-        await _accountRepository.Delete(_mapper.Map<Account>(account));
-        return new Response<AccountDto> { Message = "You have uccessfully deleted account.", Succeeded = true };
+        var existing = await _accountRepository.Accounts.FirstOrDefaultAsync(x => x.Code == account.Id);
+        if(existing == null)
+        {
+            var message = "Selected account does not exists";
+            return new ErrorResponse { Errors = [message], Message = message };
+        }
+        await _accountRepository.Delete(existing);
+        return new Response<AccountDto>
+        {
+            Message = "You have uccessfully deleted account.",
+            Succeeded = true,
+            Data = _mapper.Map<AccountDto>(existing)
+        };
     }
 
     public async Task<AccountDto> GetAccountById(int code)
@@ -70,6 +83,11 @@ public class AccountService(IValidator<AccountDto> validator, IMapper mapper, IP
 
     public async Task<IResponse> Update(AccountDto account)
     {
+        var existing = await GetAccountById(account.Id);
+        if (existing is null) {
+            var message = "Selected account does not exists";
+            return new ErrorResponse { Errors = [message], Message = message, Succeeded = false };
+        }
         var entity = await _accountRepository.Update(_mapper.Map<Account>(account));
         account = _mapper.Map<AccountDto>(entity);
         return new Response<AccountDto> { Data = account, Message = "Account was successfully updated", Succeeded = true};

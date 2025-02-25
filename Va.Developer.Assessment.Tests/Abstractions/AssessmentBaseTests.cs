@@ -9,7 +9,7 @@ namespace Va.Developer.Assessment.Tests.Abstractions
         protected AssessmentBaseTests(WebAssessmentFactory web) 
         {
             _web = web;
-            _web.ExecuteSqlScripts().Wait();
+            _web.ExecuteSqlScripts("Persons").Wait();
         }
     }
 }
