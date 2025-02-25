@@ -1,6 +1,6 @@
 <template>
 
-  <Add @user-added-event="onAdd" :modal="modal!" />
+  <Add @user-added-event="onAdd"  />
   <TableHeader :title="'Assessment Users'" :subtitle="'Manage or add new users to the assessement application'" />
   <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
     <div class="w-full md:w-1/2">
@@ -45,7 +45,7 @@
         <tr class="border-b" v-for="user in filteredUsers" :key="user.id">
           <th scope="row" class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{{ user.idNo }}</th>
           <td class="px-4 py-3 capitalize">{{ user.firstName }} {{ user.lastName }}</td>
-          <td class="px-4 py-3" v-for="account in user.accounts">
+          <td class="px-4 py-3" v-for="account in user.accounts" :key="account.id">
             <span class="flex flex-col">{{ account.accountNo }}</span>
           </td>
           <td class="px-4 py-3 flex items-center justify-end">
@@ -104,7 +104,6 @@ const users = ref<User[]>([])
 const fuse = ref<Fuse<User> | null>(null);
 
 
-const modal = ref<ModalInterface | null>(null);
 
 const initFuse = () => {
   if (users.value && users.value.length > 0) {
@@ -135,7 +134,7 @@ const initFuse = () => {
 };
 const getUsers = async () => {
   try {
-    var response = (await axios.get<Response<User[]>>('http://localhost:5209/api/persons'))
+    const response = (await axios.get<Response<User[]>>('http://localhost:5209/api/persons'))
     users.value = response.data.data.map((user) => {
       return {
         ...user,
@@ -150,11 +149,6 @@ const getUsers = async () => {
 };
 const total = computed(() => users.value.length);
 
-const onShow = () => {
-  if (modal.value) {
-    modal.value.show()
-  }
-}
 
 const onSearch = (search: string) => {
   if (search.trim() !== '' && users.value.length > 0 && fuse.value) {
@@ -170,13 +164,13 @@ const filteredUsers = computed(() => {
   return source.slice(start, end);
 });
 const onAdd = async (response: Response<User>) => {
+  users.value.push(response.data)
   toastType.value = 'success'
   message.value = response.message
   succeeded.value = true;
   const $closeBtnEl = document.getElementById('close-modal')
   if($closeBtnEl){
      $closeBtnEl.click()
-
   }
 
 }
@@ -198,15 +192,8 @@ const onDelete = async (user: User) => {
   }
 
 }
-onBeforeUnmount(() => {
-  if (modal.value) {
-    modal.value.hide();
-  }
-});
-
 onMounted(() => {
   getUsers();
-  initModal()
 });
 
 watch(users, initFuse, { immediate: true });
@@ -226,21 +213,4 @@ watch(filteredUsers, () => {
     });
   });
 });
-const initModal = () => {
-  initModals()
-  const $modalEl = document.getElementById('add-user')
-  if ($modalEl)
-    modal.value = new Modal($modalEl, {
-      closable: true,
-      placement: 'center',
-      backdrop: 'dynamic',
-      backdropClasses: 'fixed inset-0 z-40',
-      onShow: () => {
-        $modalEl.classList.add('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-      },
-      onHide: () => {
-        $modalEl.classList.remove('bg-gray-900/50', 'fixed', 'inset-0', 'z-40');
-      }
-    })
-}
 </script>

@@ -89,12 +89,6 @@ import { rules } from '@/validators/user.validator'
 import axios, { AxiosError } from 'axios';
 import { type ModalInterface } from 'flowbite';
 
-const props = defineProps({
-  modal: {
-    type: Object as PropType<ModalInterface>,
-    required: true,
-  },
-});
 const initForm = () => {
   return reactive<User>({
     firstName: '',
@@ -116,30 +110,18 @@ const onSubmit = async () => {
     return;
   }
   try {
-    var response = (await axios.post<Response<User>>(endoint, form)).data;
+    const response = (await axios.post<Response<User>>(endoint, form)).data;
     messages.value = [response.message]
     succeeded.value = response.succeeded;
     initForm()
     onUserAdded('user-added-event', response);
-
   }
   catch (e) {
     if (e instanceof AxiosError && typeof e.response !== undefined) {
-      var err = (e.response?.data.errors as string[])
+      const err = (e.response?.data.errors as string[])
       succeeded.value = false;
       messages.value = err.length > 0 ? err : e.response?.data.errors;
     }
-    onShow()
-  }
-}
-const onShow = () => {
-  if (props.modal) {
-    props.modal.show()
-  }
-}
-const onHide = () => {
-  if (props.modal) {
-    props.modal.hide()
   }
 }
 </script>
