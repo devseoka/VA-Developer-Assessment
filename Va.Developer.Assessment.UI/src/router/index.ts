@@ -5,12 +5,14 @@ import EditPersonView from '@/views/people/EditPersonView.vue';
 import TransactionView from '@/views/transaction/TransactionView.vue';
 import Home from '@/views/Home.vue';
 import Contact from '@/views/Contact.vue';
+import About from '@/views/About.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {path: '/', name: 'home', component: Home },
-    {path: '/contact', name: 'contct', component: Contact },
+    {path: '/contact', name: 'contact', component: Contact },
+    {path: '/about', name: 'about', component: About },
     { path: '/users', name: 'users', component: PeopleView },
     { path: '/users/:id', name: 'user-detail', component: EditPersonView },
     { path: '/accounts/:id', name: 'account-detail', component: EditAccount },
