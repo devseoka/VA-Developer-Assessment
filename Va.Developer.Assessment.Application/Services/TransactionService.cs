@@ -100,8 +100,8 @@ namespace Va.Developer.Assessment.Application.Services
                 return new Response<TransactionDto>
                 {
                     Data = _mapper.Map<TransactionDto>(entity),
-                    Succeeded = existing.Total == entity.Amount,
-                    Message = "You have successfully updated your balance"
+                    Succeeded = true,
+                    Message = "You have successfully updated your transaction"
                 };
             }
             catch(Exception ex)

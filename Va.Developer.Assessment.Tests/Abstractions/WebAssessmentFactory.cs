@@ -11,9 +11,13 @@ namespace Va.Developer.Assessment.Tests.Abstractions
         public IPersonRepostiory PersonRepostiory { get; }
         public ITransactionRepository TransactionRepository { get; }
         public IAccountRepository AccountRepository { get; }
+        public ITransactionManager TransactionManager { get; }
+        public IValidator<TransactionDto> TransactionValidator { get; }
         public IPersonService PersonService { get; }
+        public IAccountService AccountService { get; }
         public IValidator<AccountDto> AccountValidator { get; }
         public IMapper Mapper { get; }
+        public ILogger<TransactionService> Logger { get; }
 
         private readonly ILogger<WebAssessmentFactory> _logger;
 
@@ -22,14 +26,21 @@ namespace Va.Developer.Assessment.Tests.Abstractions
         {
             Fixture = fixture;
             var scope = Services.CreateScope();
+            
             _logger = scope.ServiceProvider.GetRequiredService<ILogger<WebAssessmentFactory>>();
+            Logger = scope.ServiceProvider.GetRequiredService<ILogger<TransactionService>>();
+            
             PersonRepostiory = scope.ServiceProvider.GetRequiredService<IPersonRepostiory>();
             AccountRepository = scope.ServiceProvider.GetRequiredService<IAccountRepository>();
             TransactionRepository = scope.ServiceProvider.GetRequiredService<ITransactionRepository>();
+            TransactionManager = scope.ServiceProvider.GetRequiredService<ITransactionManager>();
+
             Mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
             AccountValidator = scope.ServiceProvider.GetRequiredService<IValidator<AccountDto>>();
-            PersonService = scope.ServiceProvider.GetRequiredService<IPersonService>();
+            TransactionValidator = scope.ServiceProvider.GetRequiredService<IValidator<TransactionDto>>();
 
+            PersonService = scope.ServiceProvider.GetRequiredService<IPersonService>();
+            AccountService = scope.ServiceProvider.GetRequiredService<IAccountService>();
         }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -1,6 +1,5 @@
 using Va.Developer.Assessment.Domain.Contracts.Repository;
 using Va.Developer.Assessment.Domain.Models;
-using Va.Developer.Assessment.Infrastructure.Persistence.Context;
 
 namespace Va.Developer.Assessment.Infrastructure.Persistence.Repositories
 {
