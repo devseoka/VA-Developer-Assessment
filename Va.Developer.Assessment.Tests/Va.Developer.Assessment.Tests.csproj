@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -16,13 +16,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.18.1" />
-    <PackageReference Include="Bogus" Version="35.6.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
-    <PackageReference Include="Moq" Version="4.20.72" />
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.13" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+	  <PackageReference Include="Testcontainers" Version="4.3.0" />
+	  <PackageReference Include="Testcontainers.MsSql" Version="4.3.0" />
+	  <PackageReference Include="xunit" Version="2.5.3" />
+	  <PackageReference Include="AutoFixture" Version="4.18.1" />
+	  <PackageReference Include="System.Net.Http" Version="4.3.4" />
+	  <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -35,6 +36,15 @@
   <ItemGroup>
     <Folder Include="Repositories\" />
   </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Scripts\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Scripts\**\*.sql">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Va.Developer.Assessment.Api\Va.Developer.Assessment.Api.csproj" />
